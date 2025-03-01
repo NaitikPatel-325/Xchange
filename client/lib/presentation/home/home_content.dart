@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:xchange/widgets/custom_carousel.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+
+import '../barter/barter_details.dart';
 
 class HomeContent extends StatelessWidget {
   const HomeContent({super.key});
@@ -22,7 +25,7 @@ class HomeContent extends StatelessWidget {
             color: Colors.deepOrange,
           ),
           const SizedBox(height: 16),
-          CustomCarousel(), // Assuming this is your carousel widget
+          _buildFeaturedTrades(context), // Improved featured trades section with carousel
 
           const SizedBox(height: 24),
           _buildSectionHeader(
@@ -114,6 +117,153 @@ class HomeContent extends StatelessWidget {
     );
   }
 
+  // Improved Featured Trades section with CarouselSlider
+  Widget _buildFeaturedTrades(BuildContext context) {
+    List<Map<String, String>> featuredItems = [
+      {
+        "title": "iPad Pro for DJI Mini Drone",
+        "image": "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?q=80&w=200"
+      },
+      {
+        "title": "MacBook for Camera Gear",
+        "image": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=200"
+      },
+      {
+        "title": "iPhone for Gaming Console",
+        "image": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?q=80&w=200"
+      }
+    ];
+
+    return SizedBox(
+      height: 220,
+      child: CarouselSlider(
+        options: CarouselOptions(
+          height: 220,
+          aspectRatio: 16/9,
+          viewportFraction: 0.85,
+          enlargeCenterPage: true,
+          enableInfiniteScroll: true,
+          autoPlay: true,
+          autoPlayInterval: const Duration(seconds: 5),
+          autoPlayAnimationDuration: const Duration(milliseconds: 800),
+          autoPlayCurve: Curves.fastOutSlowIn,
+        ),
+        items: featuredItems.map((item) {
+          return Builder(
+            builder: (BuildContext context) {
+              return Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.deepPurple,
+                      Colors.deepPurple.shade800,
+                    ],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      // Gradient overlay over image
+                      CachedNetworkImage(
+                        imageUrl: item["image"] ?? "",
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(
+                          color: Colors.grey[900],
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.purpleAccent),
+                            ),
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          color: Colors.grey[800],
+                          child: const Icon(Icons.shopping_cart, color: Colors.purpleAccent, size: 40),
+                        ),
+                      ),
+                      // Gradient overlay
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withOpacity(0.7),
+                            ],
+                            stops: const [0.6, 1.0],
+                          ),
+                        ),
+                      ),
+                      // Content
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              item["title"] ?? "",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.deepOrange.withOpacity(0.8),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.local_fire_department,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    "Featured",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        }).toList(),
+      ),
+    );
+  }
+
   Widget _buildSectionHeader({
     required String title,
     required IconData icon,
@@ -158,6 +308,7 @@ class HomeContent extends StatelessWidget {
     );
   }
 
+  // Fixed Popular Barters section with adjusted layout to prevent overflow
   Widget _popularBarters() {
     // More realistic barter items with image URLs
     List<Map<String, String>> barters = [
@@ -165,25 +316,41 @@ class HomeContent extends StatelessWidget {
         "title": "MacBook Pro for DSLR Camera",
         "user": "John Doe",
         "image": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=200",
-        "avatar": "https://randomuser.me/api/portraits/men/32.jpg"
+        "avatar": "https://randomuser.me/api/portraits/men/32.jpg",
+        "description": "Looking to trade my MacBook Pro (2022) with M2 chip for a professional DSLR camera with accessories.",
+        "offer": "MacBook Pro 2022 (M2, 16GB RAM, 512GB SSD)",
+        "request": "Canon EOS or Nikon D850 with lenses",
+        "offeredBy": "John Doe"
       },
       {
         "title": "Mountain Bike for AirPods Pro",
         "user": "Alice Smith",
         "image": "https://images.unsplash.com/photo-1485965120184-e220f721d03e?q=80&w=200",
-        "avatar": "https://randomuser.me/api/portraits/women/44.jpg"
+        "avatar": "https://randomuser.me/api/portraits/women/44.jpg",
+        "description": "Trading my barely used mountain bike for AirPods Pro. The bike is in excellent condition.",
+        "offer": "Trek Mountain Bike (2023 model)",
+        "request": "AirPods Pro (2nd generation)",
+        "offeredBy": "Alice Smith"
       },
       {
         "title": "iPad Pro for DJI Mini Drone",
         "user": "David Johnson",
         "image": "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?q=80&w=200",
-        "avatar": "https://randomuser.me/api/portraits/men/22.jpg"
+        "avatar": "https://randomuser.me/api/portraits/men/22.jpg",
+        "description": "Would like to trade my iPad Pro for a DJI Mini drone. iPad is in perfect condition with case included.",
+        "offer": "iPad Pro 11-inch (2022)",
+        "request": "DJI Mini 3 Pro with controller",
+        "offeredBy": "David Johnson"
       },
       {
         "title": "Gaming PC for Apple Watch",
         "user": "Michael Lee",
         "image": "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?q=80&w=200",
-        "avatar": "https://randomuser.me/api/portraits/men/42.jpg"
+        "avatar": "https://randomuser.me/api/portraits/men/42.jpg",
+        "description": "Trading my custom gaming PC setup for an Apple Watch. PC has RTX 3080 and i9 processor.",
+        "offer": "Custom Gaming PC (RTX 3080, i9, 32GB RAM)",
+        "request": "Apple Watch Series 8 or newer",
+        "offeredBy": "Michael Lee"
       },
     ];
 
@@ -192,111 +359,131 @@ class HomeContent extends StatelessWidget {
       shrinkWrap: true,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.8,
+        childAspectRatio: 0.75, // Adjusted aspect ratio to provide more vertical space
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
       ),
       itemCount: barters.length,
       itemBuilder: (context, index) {
         var item = barters[index];
-        return Card(
-          elevation: 4,
-          shadowColor: Colors.black.withOpacity(0.4),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Image section
-              Expanded(
-                flex: 3,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[800],
-                    ),
-                    child: CachedNetworkImage(
-                      imageUrl: item["image"] ?? "",
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        color: Colors.grey[900],
-                        child: const Center(
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.purpleAccent),
+        return GestureDetector(
+          onTap: () {
+            // Navigate to BarterDetailScreen with the selected item
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BarterDetailScreen(item: item),
+              ),
+            );
+
+            // Alternative navigation using Get if you prefer:
+            // Get.to(() => BarterDetailScreen(item: item));
+          },
+          child: Card(
+            elevation: 4,
+            shadowColor: Colors.black.withOpacity(0.4),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Image section
+                Expanded(
+                  flex: 3,
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[800],
+                      ),
+                      child: CachedNetworkImage(
+                        imageUrl: item["image"] ?? "",
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(
+                          color: Colors.grey[900],
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.purpleAccent),
+                            ),
                           ),
                         ),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        color: Colors.grey[800],
-                        child: const Icon(Icons.shopping_cart, color: Colors.purpleAccent, size: 40),
+                        errorWidget: (context, url, error) => Container(
+                          color: Colors.grey[800],
+                          child: const Icon(Icons.shopping_cart, color: Colors.purpleAccent, size: 40),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
 
-              // Content section
-              Expanded(
-                flex: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
+                // Content section - simplified with compact layout
+                Container(
+                  // Fixed height content area to prevent overflow
+                  height: 72,
+                  padding: const EdgeInsets.all(8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        item["title"] ?? "",
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                      // Title with limited height
+                      SizedBox(
+                        height: 36,
+                        child: Text(
+                          item["title"] ?? "",
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      // Fixed avatar row to prevent overflow
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: CachedNetworkImage(
-                                imageUrl: item["avatar"] ?? "",
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => Container(
-                                  color: Colors.grey[700],
-                                ),
-                                errorWidget: (context, url, error) => Container(
-                                  color: Colors.grey[700],
-                                  child: const Icon(Icons.person, color: Colors.white, size: 16),
+                      // User info row with strict height constraints
+                      SizedBox(
+                        height: 20, // Fixed height to prevent overflow
+                        child: Row(
+                          children: [
+                            // Avatar with fixed dimensions
+                            SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: CachedNetworkImage(
+                                  imageUrl: item["avatar"] ?? "",
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Container(
+                                    color: Colors.grey[700],
+                                  ),
+                                  errorWidget: (context, url, error) => Container(
+                                    color: Colors.grey[700],
+                                    child: const Icon(Icons.person, color: Colors.white, size: 14),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              item["user"] ?? "",
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Colors.grey[400],
-                                fontSize: 12,
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                item["user"] ?? "",
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Colors.grey[700],
+                                  fontSize: 12,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
