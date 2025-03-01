@@ -21,9 +21,6 @@ class FirebaseServices {
     final String baseUrl = 'http://192.168.19.58:3000';
 
     print("insidesignup"+ baseUrl);
-
-
-
     try {
       signUpController.setLoading(true);
       final String str = signUpController.email.value.text.toString();
@@ -70,6 +67,7 @@ class FirebaseServices {
                 color: Colors.white,
               ));
           signUpController.setLoading(false);
+
         }).onError((error, stackTrace) {
           Utils.showSnackBar(
               'Error',
@@ -90,6 +88,9 @@ class FirebaseServices {
             ));
         signUpController.setLoading(false);
       });
+      print("Navigating to Preferences Screen...");
+      Get.offAllNamed("/preferencesScreen");
+
     } catch (e) {
       Utils.showSnackBar(
           'Error',
@@ -157,7 +158,6 @@ class FirebaseServices {
         signInController.setLoading(false);
       });
 
-      Get.offAllNamed('/homePage');
 
       // Show success message
       Utils.showSnackBar(

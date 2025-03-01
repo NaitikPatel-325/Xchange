@@ -63,7 +63,4 @@ class SignupController extends GetxController{
     passwordFocus.value=false;
     FocusScope.of(context).unfocus();
   }
-
-
-
 }
