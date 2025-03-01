@@ -5,17 +5,14 @@ dotenv.config(); // Load environment variables
 
 const connectDB = async () => {
   try {
-    console.log(
-      "🔍 MONGO_URI:" +
-        "mongodb+srv://kriscollege:Kris%40123@cluster0.3crjfvn.mongodb.net/ParkEZ"
-    ); // Debugging line
+    
 
-    // if (!process.env.MONGO_URI) {
-    //   throw new Error("❌ MONGO_URI is not defined in .env file");
-    // }
+    if (!process.env.MONGO_URI) {
+      throw new Error("❌ MONGO_URI is not defined in .env file");
+    }
 
     await mongoose.connect(
-      "mongodb+srv://kriscollege:Kris%40123@cluster0.3crjfvn.mongodb.net/ParkEZ",
+      process.env.MONGO_URI,
       {
         dbName: "XChange",
       }
