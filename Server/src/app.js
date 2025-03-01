@@ -6,6 +6,7 @@ import cors from "cors";
 import userRoutes from "./routes/userRoutes.js";
 import barterRoutes from "./routes/barterRoutes.js";
 import barterlistingRoutes from "./routes/barterlistingRoutes.js";
+import transctionRoutes from "./routes/transactionRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -26,6 +27,7 @@ app.use(cookieparser());
 app.use("/api/users", userRoutes);
 app.use("/api/v2/barter", barterRoutes);
 app.use("/api/barter", barterlistingRoutes);
+app.use("/api/transaction",transctionRoutes);
 // app.use("/api/barter", barterRoutes);
 
 // Health check route

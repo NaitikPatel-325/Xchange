@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import 'package:xchange/presentation/chat/chat_screen.dart';
 
 class BarterDetailScreen extends StatelessWidget {
@@ -9,11 +12,15 @@ class BarterDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String title = item["title"] ?? "Barter Details";
+    final String offer = item["offer"] ?? _extractOffer(title);
+    final String request = item["request"] ?? _extractRequest(title);
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text(
-          item["title"] ?? "Barter Details",
+          title,
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -31,9 +38,8 @@ class BarterDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Title
               Text(
-                item["title"] ?? "No Title",
+                title,
                 style: const TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -43,15 +49,13 @@ class BarterDetailScreen extends StatelessWidget {
                 maxLines: 2,
               ),
               const SizedBox(height: 10),
-
-              // Posted by
               Row(
                 children: [
                   const Icon(Icons.person, color: Colors.grey, size: 18),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      "Posted by: ${item["offeredBy"] ?? "Unknown"}",
+                      "Posted by: ${item["email"] ?? "Unknown"}",
                       style: const TextStyle(fontSize: 16, color: Colors.grey),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -59,8 +63,6 @@ class BarterDetailScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 20),
-
-              // Description
               const Text(
                 "Description",
                 style: TextStyle(
@@ -79,20 +81,26 @@ class BarterDetailScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-
-              // Offering & Requesting
-              _buildInfoRow("Offering", item["offer"] ?? "Not specified"),
+              _buildInfoRow("Offering", offer),
               const SizedBox(height: 10),
-              _buildInfoRow("Requesting", item["request"] ?? "Not specified"),
+              _buildInfoRow("Requesting", request),
               const SizedBox(height: 30),
-
-              // Buttons
-              _buildActionButtons(),
+              _buildActionButtons(context),
             ],
           ),
         ),
       ),
     );
+  }
+
+  String _extractOffer(String title) {
+    final parts = title.split(" for ");
+    return parts.isNotEmpty ? parts.first : "Not specified";
+  }
+
+  String _extractRequest(String title) {
+    final parts = title.split(" for ");
+    return parts.length > 1 ? parts.last : "Not specified";
   }
 
   Widget _buildInfoRow(String label, String value) {
@@ -131,10 +139,76 @@ class BarterDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons() {
+  Future<Map<String, String?>> _loadUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return {
+      'userId': prefs.getString("MONGO_USER_ID"),
+      'userEmail': prefs.getString("EMAIL"), // Use getString, not setString
+    };
+  }
+
+
+  Future<void> _proposeExchange() async {
+    try {
+      // Replace with your actual API endpoint
+      const String apiUrl = 'https://your-backend-api.com/api/exchange/propose';
+
+      // You'll need to get the current user's ID/email from your auth system
+      final userData = await _loadUserData();
+      final String? requestorId = userData['userId'];
+      final String? requestorEmail = userData['userEmail'];
+      print(requestorEmail);
+      print(requestorId);
+      final Map<String, dynamic> proposalData = {
+        'requestorId': requestorId,
+        'requestorEmail': requestorEmail,
+        'recipientId': item["offeredBy"], // The user who posted the barter
+        'recipientEmail': item["email"],
+        'offeredItem': {
+          'title': item["title"],
+          'description': item["description"],
+          'offer': _extractOffer(item["title"] ?? ""),
+        },
+        'requestedItem': {
+          'title': _extractRequest(item["title"] ?? ""),
+        },
+        'status': 'pending',
+        'createdAt': DateTime.now().toIso8601String(),
+      };
+
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(proposalData),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.snackbar(
+          "Success",
+          "Exchange proposal sent successfully!",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        throw Exception('Failed to propose exchange: ${response.statusCode}');
+      }
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        "Failed to send proposal: $e",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  Widget _buildActionButtons(BuildContext context) {
     return Column(
       children: [
-        // Propose Exchange Button
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
@@ -143,15 +217,7 @@ class BarterDetailScreen extends StatelessWidget {
               backgroundColor: Colors.deepPurple,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
-            onPressed: () {
-              Get.snackbar(
-                "Success",
-                "Exchange proposal sent!",
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: Colors.green,
-                colorText: Colors.white,
-              );
-            },
+            onPressed: _proposeExchange,
             child: const Text(
               "Propose Exchange",
               style: TextStyle(
@@ -163,8 +229,6 @@ class BarterDetailScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-
-        // Start Chat Button
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
