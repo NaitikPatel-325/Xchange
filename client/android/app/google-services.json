@@ -1,0 +1,91 @@
+{
+  "project_info": {
+    "project_number": "591321760190",
+    "firebase_url": "https://xchange-b24fb-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "xchange-b24fb",
+    "storage_bucket": "xchange-b24fb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:591321760190:android:81476da55a1feb29b079ef",
+        "android_client_info": {
+          "package_name": "com.ddu.exchange"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "591321760190-5uqm7lnhjl6h7sgkkvg500fidb42trf8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ddu.exchange",
+            "certificate_hash": "55bcbd0b97b613c7213f8743036b95e305938c8e"
+          }
+        },
+        {
+          "client_id": "591321760190-qf9gvbj25h9rs0fpkgi5qmoscl85kda3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyMVQ0kn9jV4lPnMGIdvxaC42dwxk7_Z8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "591321760190-qf9gvbj25h9rs0fpkgi5qmoscl85kda3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "591321760190-0s1tibniofjht4ieec89ldsftafnof35.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.xchange"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:591321760190:android:358da1baff637415b079ef",
+        "android_client_info": {
+          "package_name": "com.exchange.xchange"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "591321760190-qf9gvbj25h9rs0fpkgi5qmoscl85kda3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyMVQ0kn9jV4lPnMGIdvxaC42dwxk7_Z8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "591321760190-qf9gvbj25h9rs0fpkgi5qmoscl85kda3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "591321760190-0s1tibniofjht4ieec89ldsftafnof35.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.xchange"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
