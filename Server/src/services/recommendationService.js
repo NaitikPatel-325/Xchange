@@ -77,6 +77,7 @@ export const getRecommendations = async (userId) => {
       listingTitle: listing.title,
       category: listing.category,
       description: listing.description,
+      listingId: listing._id,
     }));
   } catch (error) {
     console.error("❌ Error fetching recommendations:", error.message);

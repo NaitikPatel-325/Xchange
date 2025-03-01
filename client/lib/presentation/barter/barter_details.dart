@@ -150,20 +150,38 @@ class BarterDetailScreen extends StatelessWidget {
 
   Future<void> _proposeExchange() async {
     try {
-      // Replace with your actual API endpoint
-      const String apiUrl = 'https://your-backend-api.com/api/exchange/propose';
-
-      // You'll need to get the current user's ID/email from your auth system
       final userData = await _loadUserData();
       final String? requestorId = userData['userId'];
       final String? requestorEmail = userData['userEmail'];
-      print(requestorEmail);
-      print(requestorId);
+      print(item);
+
+      if (requestorId == null) {
+        print("Missing requestorId");
+      }
+      if (requestorEmail == null) {
+        print("Missing requestorEmail");
+      }
+      if (item["listingId"] == null) {
+        print("Missing barterListingId");
+      }
+
+      if (requestorId == null || requestorEmail == null || item["listingId"] == null) {
+        Get.snackbar(
+          "Error",
+          "Missing required fields for proposal.",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return;
+      }
+
       final Map<String, dynamic> proposalData = {
         'requestorId': requestorId,
         'requestorEmail': requestorEmail,
-        'recipientId': item["offeredBy"], // The user who posted the barter
+        'recipientId': item["userId"] ?? "", // Add this back with appropriate field
         'recipientEmail': item["email"],
+        'listingId': item["listingId"],
         'offeredItem': {
           'title': item["title"],
           'description': item["description"],
@@ -177,14 +195,13 @@ class BarterDetailScreen extends StatelessWidget {
       };
 
       final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        Uri.parse("http://192.168.19.73:3000/api/transaction/propose"),
+        headers: {'Content-Type': 'application/json'},
         body: json.encode(proposalData),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+
         Get.snackbar(
           "Success",
           "Exchange proposal sent successfully!",
@@ -192,8 +209,10 @@ class BarterDetailScreen extends StatelessWidget {
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
+        Get.offAllNamed('/barterListScreen');
       } else {
-        throw Exception('Failed to propose exchange: ${response.statusCode}');
+        final errorMessage = json.decode(response.body)['message'] ?? 'Failed to propose exchange';
+        throw Exception('Error: $errorMessage');
       }
     } catch (e) {
       Get.snackbar(
