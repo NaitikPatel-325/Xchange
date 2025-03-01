@@ -6,13 +6,16 @@ dotenv.config(); // Load environment variables
 const connectDB = async () => {
   try {
     
-
+    console.log(process.env.MONGO_URI);
     if (!process.env.MONGO_URI) {
+      console.log("hi");
       throw new Error("❌ MONGO_URI is not defined in .env file");
     }
 
+    console.log("after error det",process.env.MONGO_URI);
+
     await mongoose.connect(
-      process.env.MONGO_URI,
+      process.env.MONGO_URI,  
       {
         dbName: "XChange",
       }

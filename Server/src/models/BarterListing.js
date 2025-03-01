@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const BarterListingSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
@@ -9,7 +9,10 @@ const BarterListingSchema = new mongoose.Schema({
   request: { type: String, required: true }, // What they want in return
   location: { type: String },
   status: { type: String, enum: ["active", "completed"], default: "active" },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model("BarterListing", BarterListingSchema);
+// module.exports = mongoose.model("BarterListing", BarterListingSchema);
+export const BarterListing = mongoose.model(
+  "BarterListing",
+  BarterListingSchema);
