@@ -13,11 +13,11 @@ class ProfileScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: darkBackgroundColor,
-      appBar: AppBar(
-        title: const Text("Profile", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
+      // appBar: AppBar(
+      //   title: const Text("Profile", style: TextStyle(color: Colors.white)),
+      //   backgroundColor: Colors.transparent,
+      //   elevation: 0,
+      // ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
@@ -28,9 +28,11 @@ class ProfileScreen extends StatelessWidget {
             // Profile Image
             CircleAvatar(
               radius: 50,
-              backgroundImage: user?.photoURL != null
-                  ? NetworkImage(user!.photoURL!)
-                  : const AssetImage("assets/profile_placeholder.png") as ImageProvider,
+              backgroundImage:
+                  user?.photoURL != null
+                      ? NetworkImage(user!.photoURL!)
+                      : const AssetImage("assets/profile_placeholder.png")
+                          as ImageProvider,
             ),
 
             const SizedBox(height: 15),
@@ -38,7 +40,11 @@ class ProfileScreen extends StatelessWidget {
             // User Name
             Text(
               user?.displayName ?? "Anonymous User",
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
 
             // User Email
@@ -54,14 +60,30 @@ class ProfileScreen extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Text(
                 "Barter History",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
             const SizedBox(height: 10),
 
-            _barterHistoryItem("Exchanged Laptop for Camera", "Completed", Colors.green),
-            _barterHistoryItem("Offered Design Services", "Pending", Colors.orange),
-            _barterHistoryItem("Traded Books for Digital Credits", "Completed", Colors.green),
+            _barterHistoryItem(
+              "Exchanged Laptop for Camera",
+              "Completed",
+              Colors.green,
+            ),
+            _barterHistoryItem(
+              "Offered Design Services",
+              "Pending",
+              Colors.orange,
+            ),
+            _barterHistoryItem(
+              "Traded Books for Digital Credits",
+              "Completed",
+              Colors.green,
+            ),
 
             const SizedBox(height: 30),
 
@@ -70,7 +92,10 @@ class ProfileScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _actionButton(Icons.edit, "Edit Profile", () {
-                  Get.snackbar("Coming Soon", "Edit Profile feature is under development!");
+                  Get.snackbar(
+                    "Coming Soon",
+                    "Edit Profile feature is under development!",
+                  );
                 }),
                 _actionButton(Icons.logout, "Logout", () {
                   FirebaseAuth.instance.signOut();
@@ -92,7 +117,10 @@ class ProfileScreen extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
         title: Text(title, style: const TextStyle(color: Colors.white)),
-        trailing: Text(status, style: TextStyle(color: statusColor, fontWeight: FontWeight.bold)),
+        trailing: Text(
+          status,
+          style: TextStyle(color: statusColor, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }

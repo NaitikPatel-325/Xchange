@@ -13,35 +13,43 @@ class ChatScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: Text(title, style: const TextStyle(color: Colors.white)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
+      // appBar: AppBar(
+      //   title: Text(title, style: const TextStyle(color: Colors.white)),
+      //   backgroundColor: Colors.transparent,
+      //   elevation: 0,
+      // ),
       body: Column(
         children: [
           Expanded(
-            child: Obx(() => ListView.builder(
-              padding: const EdgeInsets.all(10),
-              itemCount: controller.messages.length,
-              itemBuilder: (context, index) {
-                return Align(
-                  alignment: index % 2 == 0 ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    margin: const EdgeInsets.symmetric(vertical: 5),
-                    decoration: BoxDecoration(
-                      color: index % 2 == 0 ? Colors.blueAccent : Colors.grey[800],
-                      borderRadius: BorderRadius.circular(10),
+            child: Obx(
+              () => ListView.builder(
+                padding: const EdgeInsets.all(10),
+                itemCount: controller.messages.length,
+                itemBuilder: (context, index) {
+                  return Align(
+                    alignment:
+                        index % 2 == 0
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      decoration: BoxDecoration(
+                        color:
+                            index % 2 == 0
+                                ? Colors.blueAccent
+                                : Colors.grey[800],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        controller.messages[index],
+                        style: const TextStyle(color: Colors.white),
+                      ),
                     ),
-                    child: Text(
-                      controller.messages[index],
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                );
-              },
-            )),
+                  );
+                },
+              ),
+            ),
           ),
 
           // Chat Input Field
