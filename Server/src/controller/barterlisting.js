@@ -1,4 +1,3 @@
-// import { BarterListing } from "../models/BarterListing.js";
 import { BarterListing } from "../models/BarterListing.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import axios from "axios";
@@ -15,13 +14,13 @@ const createListing = asyncHandler(async (req, res) => {
     });
   }
 
-  console.log("Creating listing:", req.body);
+  // console.log("Creating listing:", req.body);
 
   try {
     // Fetch userId from email
-    console.log("Finding user with email:", email);
+    // console.log("Finding user with email:", email);
     const user = await User.findOne({ email : email });
-    console.log("User found:", user);
+    // console.log("User found:", user);
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -30,7 +29,7 @@ const createListing = asyncHandler(async (req, res) => {
     }
     const userId = user._id;
 
-    console.log("User found:", userId);
+    // console.log("User found:", userId);
   
     // Create new listing
     const listing = await BarterListing.create({
@@ -71,7 +70,7 @@ const getAllListings = asyncHandler(async (req, res) => {
     "userId",
     "displayName email"
   );
-  console.log(listings);
+  // console.log(listings);
   res.status(200).json({
     success: true,
     data: listings,
@@ -140,10 +139,31 @@ const deleteListing = asyncHandler(async (req, res) => {
     .json({ success: true, message: "Listing deleted successfully" });
 });
 
+const getBartersByCategory = asyncHandler(async (req, res) => {
+    try {
+      const category = req.query.category; 
+      let barters;
+      console.log("inside barters",category);
+      if (category) {
+          barters = await BarterListing.find({ category: category }); 
+      } else {
+          barters = await BarterListing.find(); 
+      }
+
+      console.log(barters);
+
+      res.status(200).json(barters);
+  } catch (error) {
+      res.status(500).json({ message: "Server Error", error });
+  }
+
+});
+
 export {
   createListing,
   getAllListings,
   getListingById,
   updateListing,
   deleteListing,
+  getBartersByCategory
 };

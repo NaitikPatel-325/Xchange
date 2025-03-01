@@ -5,12 +5,15 @@ import {
   getListingById,
   updateListing,
   deleteListing,
+  getBartersByCategory
 } from "../controller/barterlisting.js";
 
 const router = Router();
 
 // Create a new barter listing
 router.post("/create", createListing);
+
+// router.get("/", getBartersByCategory);
 
 // Read - Get all barter listings
 router.get("/", getAllListings);

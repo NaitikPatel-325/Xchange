@@ -8,6 +8,7 @@ class barterController extends GetxController {
 
   @override
   void onInit() {
+    print("BarterController initialized");
     fetchBarterItems();
     super.onInit();
   }
@@ -15,6 +16,7 @@ class barterController extends GetxController {
   Future<void> fetchBarterItems() async {
     try {
       isLoading(true);
+      print("inside fetch barterr");
       final response = await http.get(Uri.parse("http://192.168.19.58:3000/api/barter/"));
 
       if (response.statusCode == 200) {

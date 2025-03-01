@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 
-dotenv.config(); // Load environment variables
+dotenv.config(); 
 
 const connectDB = async () => {
   try {
@@ -9,7 +9,7 @@ const connectDB = async () => {
     console.log(process.env.MONGO_URI);
     if (!process.env.MONGO_URI) {
       console.log("hi");
-      throw new Error("❌ MONGO_URI is not defined in .env file");
+      throw new Error(" MONGO_URI is not defined in .env file");
     }
 
     console.log("after error det",process.env.MONGO_URI);
@@ -21,9 +21,9 @@ const connectDB = async () => {
       }
     );
 
-    console.log("✅ MongoDB Connection Established");
+    console.log(" MongoDB Connection Established");
   } catch (error) {
-    console.error("❌ Error connecting to database:", error.message);
+    console.error("Error connecting to database:", error.message);
     process.exit(1); // Stop the server if DB connection fails
   }
 };

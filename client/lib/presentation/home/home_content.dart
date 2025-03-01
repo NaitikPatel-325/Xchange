@@ -9,6 +9,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../barter/barter_details.dart';
+import '../category/category_listing.dart';
 
 
 class HomeContent extends StatefulWidget {
@@ -27,40 +28,39 @@ class _HomeContentState extends State<HomeContent>{
   }
 
   Future<void> _fetchFeaturedItems(String userId) async {
-    try {
-      final response = await http.get(
-        Uri.parse('http://192.168.19.73:3000/api/v2/barter/recommend/$userId'),
-      );
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-
-        if (data.containsKey('recommendations') && data['recommendations'] is List) {
-          final List<dynamic> items = data['recommendations'];
-
-          setState(() {
-            recommendedItems = items.map((item) {
-              return {
-                "userId": item["userId"]?.toString() ?? "",
-                "email": item["email"]?.toString() ?? "",
-                "title": item["listingTitle"]?.toString() ?? "",
-                "category": item["category"]?.toString() ?? "",
-                "description": item["description"]?.toString() ?? "",
-                "listingId": item["listingId"]?.toString() ?? "",
-              };
-            }).toList();
-          });
-
-          print("Recommended Items: $recommendedItems");
-        } else {
-          print("No recommendations found.");
-        }
-      } else {
-        print('Failed to load recommendations: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error fetching recommendations: $e');
-    }
+    // try {
+    //   final response = await http.get(
+    //     Uri.parse('http://192.168.19.74:3000/api/v2/barter/recommend/$userId'),
+    //   );
+    //
+    //   if (response.statusCode == 200) {
+    //     final Map<String, dynamic> data = json.decode(response.body);
+    //
+    //     if (data.containsKey('recommendations') && data['recommendations'] is List) {
+    //       final List<dynamic> items = data['recommendations'];
+    //
+    //       setState(() {
+    //         recommendedItems = items.map((item) {
+    //           return {
+    //             "userId": item["userId"]?.toString() ?? "",
+    //             "email": item["email"]?.toString() ?? "",
+    //             "title": item["listingTitle"]?.toString() ?? "",
+    //             "category": item["category"]?.toString() ?? "",
+    //             "description": item["description"]?.toString() ?? "",
+    //           };
+    //         }).toList();
+    //       });
+    //
+    //       print("Recommended Items: $recommendedItems");
+    //     } else {
+    //       print("No recommendations found.");
+    //     }
+    //   } else {
+    //     print('Failed to load recommendations: ${response.statusCode}');
+    //   }
+    // } catch (e) {
+    //   print('Error fetching recommendations: $e');
+    // }
   }
 
   @override
@@ -89,6 +89,15 @@ class _HomeContentState extends State<HomeContent>{
 
           const SizedBox(height: 24),
           _buildSectionHeader(
+            title: "Explore Categories",
+            icon: Icons.explore,
+            color: Colors.teal,
+          ),
+          const SizedBox(height: 16),
+          _tradeCategories(context),
+
+          const SizedBox(height: 24),
+          _buildSectionHeader(
             title: "Recommended for You",
             icon: Icons.recommend,
             color: Colors.lightBlue,
@@ -105,14 +114,7 @@ class _HomeContentState extends State<HomeContent>{
           const SizedBox(height: 16),
           _popularBarters(),
 
-          const SizedBox(height: 24),
-          _buildSectionHeader(
-            title: "Explore Categories",
-            icon: Icons.explore,
-            color: Colors.teal,
-          ),
-          const SizedBox(height: 16),
-          _tradeCategories(),
+
 
           const SizedBox(height: 80), // Extra space at bottom
         ],
@@ -630,7 +632,9 @@ class _HomeContentState extends State<HomeContent>{
     );
   }
 
-  Widget _tradeCategories() {
+
+
+  Widget _tradeCategories(BuildContext context) {
     List<Map<String, dynamic>> categories = [
       {
         "icon": Icons.devices,
@@ -665,63 +669,69 @@ class _HomeContentState extends State<HomeContent>{
     ];
 
     return SizedBox(
-      height: 120,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: categories.length,
-        separatorBuilder: (context, index) => const SizedBox(width: 16),
-        itemBuilder: (context, index) {
-          var category = categories[index];
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      category["color"],
-                      category["color"].withOpacity(0.7),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: category["color"].withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
+        height: 120,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: categories.length,
+          separatorBuilder: (context, index) => const SizedBox(width: 16),
+          itemBuilder: (context, index) {
+            var category = categories[index];
+            return GestureDetector(
+              onTap: () {
+                Get.to(() => CategoryListingsScreen(category: category["label"]));
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          category["color"],
+                          category["color"].withOpacity(0.7),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: category["color"].withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Container(
-                    width: 80,
-                    height: 80,
-                    color: Colors.black26,
-                    child: Icon(
-                      category["icon"],
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Container(
+                        width: 80,
+                        height: 80,
+                        color: Colors.black26,
+                        child: Icon(
+                          category["icon"],
+                          color: Colors.white,
+                          size: 36,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    category["label"],
+                    style: const TextStyle(
                       color: Colors.white,
-                      size: 36,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
                     ),
                   ),
-                ),
+                ],
               ),
-              const SizedBox(height: 8),
-              Text(
-                category["label"],
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
+            );
+          },
+        ),
+        );
+    }
+
 }

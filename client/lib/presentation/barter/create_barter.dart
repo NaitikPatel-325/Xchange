@@ -2,8 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:xchange/logic/controller/barter_controller.dart';
 
-class CreateBarterScreen extends StatelessWidget {
+class CreateBarterScreen extends StatefulWidget {
+  @override
+  _CreateBarterScreenState createState() => _CreateBarterScreenState();
+}
+
+class _CreateBarterScreenState extends State<CreateBarterScreen> {
   final BarterController controller = Get.put(BarterController());
+
+  final List<Map<String, dynamic>> categories = [
+    {"icon": Icons.devices, "label": "Electronics", "color": Colors.blue},
+    {"icon": Icons.pedal_bike, "label": "Transport", "color": Colors.green},
+    {"icon": Icons.sports_basketball, "label": "Sports", "color": Colors.orange},
+    {"icon": Icons.palette, "label": "Arts", "color": Colors.pink},
+    {"icon": Icons.chair, "label": "Furniture", "color": Colors.amber},
+    {"icon": Icons.work, "label": "Jobs", "color": Colors.teal},
+    {"icon": Icons.category, "label": "Other", "color": Colors.grey},
+  ];
+
+  String? selectedCategory;
+  bool isOtherSelected = false;
+  TextEditingController otherCategoryController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -55,11 +74,66 @@ class CreateBarterScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              _buildInputField(
-                label: "Category",
-                hint: "E.g., Technology, Art, Services...",
-                onChanged: (value) => controller.category.value = value,
+              Text(
+                "Category",
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
+              const SizedBox(height: 8),
+
+            DropdownButtonFormField<String>(
+              value: selectedCategory ?? "Electronics", // Default selection
+              dropdownColor: Colors.grey[900],
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.grey[900],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: Colors.purpleAccent),
+                ),
+                contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+              ),
+              icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+              style: const TextStyle(color: Colors.white, fontSize: 16),
+              items: categories.map((category) {
+                return DropdownMenuItem<String>(
+                  value: category["label"],
+                  child: Row(
+                    children: [
+                      Icon(category["icon"], color: category["color"]),
+                      const SizedBox(width: 10),
+                      Text(category["label"], style: const TextStyle(color: Colors.white)),
+                    ],
+                  ),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedCategory = value;
+                  isOtherSelected = value == "Other";
+                  if (!isOtherSelected) {
+                    controller.category.value = value!;
+                  }
+                });
+              },
+            ),
+
+            const SizedBox(height: 20),
+
+              if (isOtherSelected)
+                _buildInputField(
+                  label: "Other Category",
+                  hint: "Specify your category...",
+                  onChanged: (value) => controller.category.value = value,
+                ),
+
               const SizedBox(height: 30),
 
               SizedBox(
