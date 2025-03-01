@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../../core/routes/routes.dart';
+
 class AddressScreen extends StatefulWidget {
   @override
   _AddressScreenState createState() => _AddressScreenState();
@@ -55,6 +57,8 @@ class _AddressScreenState extends State<AddressScreen> {
 
         if (response.statusCode == 200) {
           Get.snackbar("Success", "Address updated successfully!", snackPosition: SnackPosition.BOTTOM);
+          Get.toNamed(Routes.homePage);
+
         } else {
           Get.snackbar("Error", "Failed to update address", snackPosition: SnackPosition.BOTTOM);
         }

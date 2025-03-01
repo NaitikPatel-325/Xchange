@@ -55,11 +55,11 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
         body: jsonEncode({'preferences': selectedPreferences}),
       );
 
-      Get.toNamed(Routes.AddressScreen);
 
       if (response.statusCode == 200) {
-        // Get.toNamed(Routes.homePage, arguments: {'preferences': selectedPreferences});
-        print("succ");
+        print("success");
+        Get.toNamed(Routes.AddressScreen);
+
       } else {
         throw Exception("Failed to save preferences");
       }
@@ -71,75 +71,75 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1E1E1E),
-        title: const Text("What are you interested in?",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
+        backgroundColor: Colors.black,
+        title: const Text(
+          "Choose Your Interests",
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        centerTitle: true,
+        elevation: 0,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.all(16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 1.2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-              ),
-              itemCount: preferences.length,
-              itemBuilder: (context, index) {
-                final pref = preferences[index];
-                final isSelected = selectedPreferences.contains(pref['name']);
-                final Color color = pref['color'];
-                return GestureDetector(
-                  onTap: () => toggleSelection(pref['name']),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: isSelected ? color.withOpacity(0.15) : const Color(0xFF1E1E1E),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: isSelected ? color : Colors.grey[800]!, width: 2),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-                          child: Icon(pref['icon'], color: Colors.white, size: 24),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(pref['name'],
-                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white70)),
-                        if (isSelected) ...[
-                          const SizedBox(height: 8),
-                          Container(width: 24, height: 3, color: color),
-                        ]
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 1.3,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
           ),
-        ],
+          itemCount: preferences.length,
+          itemBuilder: (context, index) {
+            final pref = preferences[index];
+            final isSelected = selectedPreferences.contains(pref['name']);
+
+            return GestureDetector(
+              onTap: () => toggleSelection(pref['name']),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                decoration: BoxDecoration(
+                  color: isSelected ? pref['color'].withOpacity(0.2) : Colors.grey[900],
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: isSelected ? pref['color'] : Colors.grey[800]!,
+                    width: 3,
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(pref['icon'], color: pref['color'], size: 40),
+                    const SizedBox(height: 8),
+                    Text(
+                      pref['name'],
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
       ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(color: const Color(0xFF1E1E1E)),
+        decoration: BoxDecoration(
+          color: Colors.black,
+          boxShadow: [BoxShadow(color: Colors.white.withOpacity(0.1), blurRadius: 10)],
+        ),
         child: ElevatedButton(
           onPressed: selectedPreferences.length >= 3 ? savePreferences : null,
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            backgroundColor: selectedPreferences.length >= 3 ? Colors.blue : Colors.grey,
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
           child: Text(
-            selectedPreferences.length >= 3 ? "Continue" : "Select at least 3 categories",
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            selectedPreferences.length >= 3 ? "Continue" : "Select at least 3",
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
       ),

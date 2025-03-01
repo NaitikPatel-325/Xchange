@@ -76,6 +76,29 @@ const updateUser = async (req, res) => {
   }
 };
 
+
+// Update - Update user details by address
+const updateaddUser = async (req, res) => {
+  try {
+    const updateData = Object.fromEntries(
+      Object.entries(req.body).filter(([_, v]) => v !== undefined)
+    );
+
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedUser) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
 // Delete - Remove user
 const deleteUser = async (req, res) => {
   try {
@@ -88,4 +111,4 @@ const deleteUser = async (req, res) => {
   }
 };
 
-export { registerUser, deleteUser, updateUser, getUserById };
+export { registerUser, deleteUser, updateUser, getUserById,updateaddUser };
