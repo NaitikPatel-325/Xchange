@@ -1,12 +1,73 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:http/http.dart' as http;
 import 'package:xchange/widgets/custom_carousel.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../barter/barter_details.dart';
 
-class HomeContent extends StatelessWidget {
-  const HomeContent({super.key});
+
+class HomeContent extends StatefulWidget {
+  @override
+  _HomeContentState createState() => _HomeContentState();
+}
+
+class _HomeContentState extends State<HomeContent>{
+  List<Map<String, String>> recommendedItems = [];
+  Future<void> _loadUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var userId = prefs.getString("MONGO_USER_ID");
+    if (userId != null) {
+      await _fetchFeaturedItems(userId);
+    }
+  }
+
+  Future<void> _fetchFeaturedItems(String userId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://192.168.19.73:3000/api/v2/barter/recommend/$userId'),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+
+        if (data.containsKey('recommendations') && data['recommendations'] is List) {
+          final List<dynamic> items = data['recommendations'];
+
+          setState(() {
+            recommendedItems = items.map((item) {
+              return {
+                "userId": item["userId"]?.toString() ?? "",
+                "email": item["email"]?.toString() ?? "",
+                "title": item["listingTitle"]?.toString() ?? "",
+                "category": item["category"]?.toString() ?? "",
+                "description": item["description"]?.toString() ?? "",
+              };
+            }).toList();
+          });
+
+          print("Recommended Items: $recommendedItems");
+        } else {
+          print("No recommendations found.");
+        }
+      } else {
+        print('Failed to load recommendations: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching recommendations: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserId();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +76,6 @@ class HomeContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Improved top section with app header
           _buildAppHeader(context),
           const SizedBox(height: 20),
 
@@ -25,7 +85,16 @@ class HomeContent extends StatelessWidget {
             color: Colors.deepOrange,
           ),
           const SizedBox(height: 16),
-          _buildFeaturedTrades(context), // Improved featured trades section with carousel
+          _buildFeaturedTrades(context),
+
+          const SizedBox(height: 24),
+          _buildSectionHeader(
+            title: "Recommended for You",
+            icon: Icons.recommend,
+            color: Colors.lightBlue,
+          ),
+          const SizedBox(height: 16),
+          _recommendedItems(),
 
           const SizedBox(height: 24),
           _buildSectionHeader(
@@ -45,9 +114,80 @@ class HomeContent extends StatelessWidget {
           const SizedBox(height: 16),
           _tradeCategories(),
 
-          const SizedBox(height: 80), // Extra space at bottom for navigation bar
+          const SizedBox(height: 80), // Extra space at bottom
         ],
       ),
+    );
+  }
+
+  // New Recommended Section
+  Widget _recommendedItems() {
+    return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: recommendedItems.length,
+      itemBuilder: (context, index) {
+        var item = recommendedItems[index];
+        return GestureDetector(
+          onTap: () {
+            Get.to(() => BarterDetailScreen(item: item));
+          },
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 8.0),
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.grey[900],
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.5),
+                  blurRadius: 6,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item["title"] ?? "",
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  item["description"] ?? "",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[400],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      item["category"] ?? "",
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.purpleAccent,
+                      ),
+                    ),
+                    const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16,
+                      color: Colors.purpleAccent,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

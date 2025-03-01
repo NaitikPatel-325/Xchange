@@ -17,7 +17,7 @@ class FirebaseServices {
   static final FirebaseAuth auth = FirebaseAuth.instance;
 
   static Future<void> createAccount() async {
-    final String baseUrl = 'http://192.168.19.58:3000';
+    final String baseUrl = 'http://192.168.19.73:3000';
     print("Inside signup: $baseUrl");
 
     try {

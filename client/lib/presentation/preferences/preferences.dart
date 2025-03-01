@@ -41,7 +41,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   }
 
   Future<void> savePreferences() async {
-    final String baseUrl = 'http://192.168.19.58:3000';
+    final String baseUrl = 'http://192.168.19.73:3000';
     try {
       SharedPreferences pref = await SharedPreferences.getInstance();
       String? userId = pref.getString('MONGO_USER_ID');

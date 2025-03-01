@@ -47,7 +47,7 @@ class _AddressScreenState extends State<AddressScreen> {
 
   Future<void> updateAddress() async {
     if (_formKey.currentState!.validate() && userId != null) {
-      final String baseUrl = 'http://192.168.19.58:3000';
+      final String baseUrl = 'http://192.168.19.73:3000';
       try {
         final response = await http.put(
           Uri.parse('$baseUrl/api/users/$userId'),
@@ -56,11 +56,22 @@ class _AddressScreenState extends State<AddressScreen> {
         );
 
         if (response.statusCode == 200) {
-          Get.snackbar("Success", "Address updated successfully!", snackPosition: SnackPosition.BOTTOM);
+          Get.snackbar(
+            "Success",
+            "Address updated successfully!",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
           Get.toNamed(Routes.homePage);
-
         } else {
-          Get.snackbar("Error", "Failed to update address", snackPosition: SnackPosition.BOTTOM);
+          Get.snackbar(
+            "Error",
+            "Failed to update address",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
         }
       } catch (e) {
         print("Error updating address: $e");
@@ -71,22 +82,97 @@ class _AddressScreenState extends State<AddressScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Update Address')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: Text('Submit Address', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.black,
+        elevation: 0,
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.black, Colors.grey[900]!],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        padding: const EdgeInsets.all(20),
         child: Form(
           key: _formKey,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              ShaderMask(
+                shaderCallback: (bounds) => LinearGradient(
+                  colors: [Colors.pinkAccent, Colors.deepPurpleAccent],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ).createShader(bounds),
+                child: Text(
+                  "Enter Your Address",
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              SizedBox(height: 30),
               TextFormField(
                 controller: addressController,
-                decoration: InputDecoration(labelText: 'Address'),
-                validator: (value) => value!.isEmpty ? 'Enter address' : null,
+                style: TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  labelText: 'Address',
+                  labelStyle: TextStyle(color: Colors.white70),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white70),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.pinkAccent),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[800],
+                  prefixIcon: Icon(Icons.location_on, color: Colors.pinkAccent),
+                ),
+                validator: (value) => value!.isEmpty ? 'Enter your address' : null,
               ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: updateAddress,
-                child: Text('Update Address'),
+              SizedBox(height: 30),
+              GestureDetector(
+                onTap: updateAddress,
+                child: AnimatedContainer(
+                  duration: Duration(milliseconds: 300),
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    gradient: LinearGradient(
+                      colors: [Colors.pinkAccent, Colors.deepPurpleAccent],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.pinkAccent.withOpacity(0.5),
+                        blurRadius: 10,
+                        offset: Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Submit',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
