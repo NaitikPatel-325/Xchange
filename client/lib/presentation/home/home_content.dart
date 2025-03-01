@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:xchange/widgets/custom_carousel.dart';
 
 class HomeContent extends StatelessWidget {
-  HomeContent({super.key});
+  const HomeContent({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,41 +12,31 @@ class HomeContent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 20),
-          const Text(
-            "🔥 Featured Trades",
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
+          _sectionTitle("🔥 Featured Trades"),
           const SizedBox(height: 15),
-          CustomCarousel(), // ✅ Carousel with static data
+          CustomCarousel(), // Carousel for featured trades
 
           const SizedBox(height: 30),
-          const Text(
-            "✨ Popular Barter Deals",
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
+          _sectionTitle("✨ Popular Barter Deals"),
           const SizedBox(height: 15),
-          _popularBarters(), // ✅ Static barter listings
+          _popularBarters(), // Popular trades grid
 
           const SizedBox(height: 30),
-          const Text(
-            "🎯 Explore Categories",
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
+          _sectionTitle("🎯 Explore Categories"),
           const SizedBox(height: 15),
-          _tradeCategories(), // ✅ Quick Trade Categories
+          _tradeCategories(), // Horizontal scrolling categories
         ],
+      ),
+    );
+  }
+
+  Widget _sectionTitle(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
       ),
     );
   }
@@ -65,36 +55,41 @@ class HomeContent extends StatelessWidget {
       shrinkWrap: true,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.8,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
+        childAspectRatio: 0.75,
+        crossAxisSpacing: 15,
+        mainAxisSpacing: 15,
       ),
       itemCount: barters.length,
       itemBuilder: (context, index) {
         var item = barters[index];
         return Card(
-          color: Colors.grey[900],
+          color: Colors.grey[850],
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.shopping_cart, color: Colors.purpleAccent, size: 50),
-              const SizedBox(height: 10),
-              Text(
-                item["title"] ?? "",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+          child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.shopping_cart, color: Colors.purpleAccent, size: 50),
+                const SizedBox(height: 15),
+                Text(
+                  item["title"] ?? "",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 5),
-              Text(
-                "By ${item["user"]}",
-                style: const TextStyle(color: Colors.grey, fontSize: 12),
-              ),
-            ],
+                const SizedBox(height: 10),
+                Text(
+                  "By ${item["user"]}",
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -111,25 +106,30 @@ class HomeContent extends StatelessWidget {
       {"icon": Icons.work, "label": "Jobs"},
     ];
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children:
-          categories.map((category) {
-            return Column(
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.purpleAccent,
-                  child: Icon(category["icon"], color: Colors.white, size: 30),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  category["label"],
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ],
-            );
-          }).toList(),
+    return SizedBox(
+      height: 100,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: categories.length,
+        separatorBuilder: (context, index) => const SizedBox(width: 15),
+        itemBuilder: (context, index) {
+          var category = categories[index];
+          return Column(
+            children: [
+              CircleAvatar(
+                radius: 35,
+                backgroundColor: Colors.purpleAccent,
+                child: Icon(category["icon"], color: Colors.white, size: 30),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                category["label"],
+                style: const TextStyle(color: Colors.white),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }
