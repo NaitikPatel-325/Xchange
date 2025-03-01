@@ -25,6 +25,13 @@ const createListing = asyncHandler(async (req, res) => {
     location,
   });
 
+  try {
+    await axios.get("http://127.0.0.1:5000/update-model");
+    console.log("AI Model updated successfully in Flask");
+  } catch (error) {
+    console.error("Error updating AI model in Flask:", error.message);
+  }
+
   return res.status(201).json({
     success: true,
     message: "Listing created successfully",

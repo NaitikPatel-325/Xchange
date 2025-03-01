@@ -1,33 +1,42 @@
 import axios from "axios";
 import { BarterListing } from "../models/BarterListing.js";
 import mongoose from "mongoose";
+import { User } from "../models/User.js";
+
 export const getRecommendations = async (userId) => {
   try {
+    console.log(`🔹 Received userId: ${userId} (Type: ${typeof userId})`);
+
+
     // 🔹 Fetch the user's barter listings
-    // const userId = req.params.userId;
-    console.log(typeof userId);
-    const userObjId = new mongoose.Types.ObjectId("67c2e0bf68d365263a0ba257");
-    const userListings = await BarterListing.find({ userId: userObjId });
+    const userListings = await BarterListing.find({ userId: new mongoose.Types.ObjectId(userId) });
 
-    console.log(userListings);
-
-    if (!userListings.length) {
-      console.log("No listings found for user.");
+    // 🔹 Fetch the user's preferences
+    const user = await User.findById(userId);
+    if (!user) {
+      console.log("❌ User not found.");
       return [];
     }
 
-    // 🔹 Convert user's interests into a single query string
-    const userQuery = userListings
-      .flatMap((listing) => [
-        listing.category,
-        // ...listing.tags,
-        listing.request,
-      ])
-      .filter(Boolean) // Remove empty values
-      .join(" "); // Convert array to string
+    console.log(`📌 User Preferences:`, user.preferences);
+
+    // ✅ If no listings, use only preferences for recommendations
+    let userQuery;
+    if (userListings.length > 0) {
+      userQuery = [
+        ...userListings.flatMap((listing) => [listing.category, listing.request]),
+        ...user.preferences, // Include preferences
+      ];
+    } else {
+      console.log("⚠️ No barter listings found for this user. Using preferences instead.");
+      userQuery = [...user.preferences]; // Use preferences alone if no listings
+    }
+
+    // 🔹 Convert the array to a string
+    userQuery = userQuery.filter(Boolean).join(" ");
 
     if (!userQuery) {
-      console.log("No valid query generated for user.");
+      console.log("❌ No valid query generated for user.");
       return [];
     }
 
@@ -35,13 +44,13 @@ export const getRecommendations = async (userId) => {
 
     // 🔹 Send the query to Flask API
     const flaskResponse = await axios.post("http://127.0.0.1:5000/recommend", {
-      query: userQuery, // ✅ Sending query in the correct format
+      query: userQuery,
     });
 
     const flaskRecommendations = flaskResponse.data.recommendations;
 
     if (!flaskRecommendations.length) {
-      console.log("No recommendations received from Flask.");
+      console.log("❌ No recommendations received from Flask.");
       return [];
     }
 
@@ -57,7 +66,7 @@ export const getRecommendations = async (userId) => {
     }).populate("userId", "name email");
 
     if (!recommendedListings.length) {
-      console.log("No matching barter listings found in MongoDB.");
+      console.log("⚠️ No matching barter listings found in MongoDB.");
     }
 
     // 🔹 Format the response
@@ -70,7 +79,7 @@ export const getRecommendations = async (userId) => {
       description: listing.description,
     }));
   } catch (error) {
-    console.error("Error fetching recommendations:", error.message);
+    console.error("❌ Error fetching recommendations:", error.message);
     return [];
   }
 };
