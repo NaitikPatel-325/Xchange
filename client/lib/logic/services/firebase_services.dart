@@ -18,7 +18,7 @@ class FirebaseServices {
   static final FirebaseDatabase database = FirebaseDatabase.instance;
   static final signInController = Get.put(SignInController());
   static Future<void> createAccount() async {
-    final String baseUrl = 'http://192.168.19.58:3000';
+    final String baseUrl = 'http://192.168.19.73:3000';
 
     print("insidesignup"+ baseUrl);
     try {
@@ -158,7 +158,7 @@ class FirebaseServices {
         signInController.setLoading(false);
       });
 
-
+      Get.offAllNamed("homePage");
       // Show success message
       Utils.showSnackBar(
         'Sign in',
