@@ -6,9 +6,9 @@ const userSchema = new mongoose.Schema(
     displayName: {
       type: String,
       required: [true, "Username is required"],
-      unique: true,
+      // unique: true,
       trim: true,
-      index: true,
+      // index: true,
     },
     email: {
       type: String,
@@ -25,6 +25,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       lowercase: true,
       maxlength: 255,
+      default: "abc,nadiad",
     },
     avatar: {
       type: String,
@@ -38,11 +39,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    preferences: [
-      {
-        type: String, // Example: ["Electronics", "Furniture", "Books"]
-      },
-    ],
+    preferences: {
+      type: [String], // Example: ["Electronics", "Furniture", "Books"]
+      default: [],
+    },
     tradeCount: {
       type: Number,
       default: 0, // Tracks how many trades a user has completed
@@ -67,7 +67,6 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
-
 
 userSchema.methods.passwordCheck = async function (password) {
   return await bcrypt.compare(password, this.password);
