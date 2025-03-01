@@ -1,32 +1,24 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class UserPref{
-  static Future<void> setUser(String name,String email,String password,String node,String token) async {
-
-    SharedPreferences pref=await SharedPreferences.getInstance();
-    pref.setString('NAME', name);
+class UserPref {
+  static Future<void> setUser(String displayName, String email, String mongoUserId) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setString('DISPLAY_NAME', displayName);
     pref.setString('EMAIL', email);
-    pref.setString('PASSWORD', password);
-    pref.setString('NODE', node);
-    pref.setString('TOKEN', token);
-
+    pref.setString('MONGO_USER_ID', mongoUserId);
   }
 
-  static Future<Map<String,String>> getUser() async {
-    SharedPreferences pref=await SharedPreferences.getInstance();
+  static Future<Map<String, String>> getUser() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
     return {
-      'NAME' : pref.getString('NAME')!,
-      'EMAIL' : pref.getString('EMAIL')!,
-      'PASSWORD' : pref.getString('PASSWORD')!,
-      'NODE' : pref.getString('NODE')!,
-      'TOKEN' : pref.getString('TOKEN')!,
+      'DISPLAY_NAME': pref.getString('DISPLAY_NAME') ?? '',
+      'EMAIL': pref.getString('EMAIL') ?? '',
+      'MONGO_USER_ID': pref.getString('MONGO_USER_ID') ?? '',
     };
   }
 
   static Future<void> removeUser() async {
-    SharedPreferences pref=await SharedPreferences.getInstance();
+    SharedPreferences pref = await SharedPreferences.getInstance();
     pref.clear();
   }
-
-
 }

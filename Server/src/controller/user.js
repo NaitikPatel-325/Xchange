@@ -19,24 +19,26 @@ const registerUser = asyncHandler(async (req, res) => {
       message: "User with this email already exists",
     });
   }
-
-  // Create new user
+  
   const user = await User.create({
     displayName,
     email,
     password,
   });
-
-  // Remove password from response
+  
   const createdUser = user.toObject();
   delete createdUser.password;
-
+  
   return res.status(201).json({
     success: true,
     message: "User registered successfully",
-    data: createdUser,
+    data: {
+      _id: createdUser._id,
+      displayName: createdUser.displayName,
+      email: createdUser.email,
+    },
   });
-});
+});  
 
 // Read - Get user by ID
 const getUserById = async (req, res) => {
