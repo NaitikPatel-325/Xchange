@@ -24,7 +24,9 @@ app.use(cookieparser());
 
 // API Routes
 app.use("/api/users", userRoutes);
+app.use("/api/v2/barter", barterRoutes);
 app.use("/api/barter", barterlistingRoutes);
+// app.use("/api/barter", barterRoutes);
 
 // Health check route
 app.get("/health", (req, res) => {

@@ -3,13 +3,14 @@ import { getRecommendations } from "../services/recommendationService.js";
 
 const router = express.Router();
 
-
 router.post("/", async (req, res) => {
   try {
     const barter = new BarterListing(req.body);
     await barter.save();
     const recommendations = await getRecommendations(req.body.userId);
-    res.status(201).json({ message: "Barter listing created", recommendations });
+    res
+      .status(201)
+      .json({ message: "Barter listing created", recommendations });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -19,7 +20,7 @@ router.post("/", async (req, res) => {
 router.get("/recommend/:userId", async (req, res) => {
   try {
     const userId = req.params.userId;
-
+    // console.log(userId);
     const recommendations = await getRecommendations(userId);
 
     if (!recommendations.length) {
@@ -31,6 +32,5 @@ router.get("/recommend/:userId", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 export default router;

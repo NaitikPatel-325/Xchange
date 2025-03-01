@@ -10,7 +10,7 @@ import {
 const router = Router();
 
 // Create a new barter listing
-router.post("/", createListing);
+router.post("/create", createListing);
 
 // Read - Get all barter listings
 router.get("/", getAllListings);
