@@ -13,7 +13,6 @@ class PreferencesScreen extends StatefulWidget {
 }
 
 class _PreferencesScreenState extends State<PreferencesScreen> {
-  // Ensure icons are properly defined and not null
   final List<Map<String, dynamic>> preferences = [
     {'name': 'Electronics', 'icon': Icons.devices, 'color': Colors.blue},
     {'name': 'Furniture', 'icon': Icons.chair, 'color': Colors.amber},
@@ -56,11 +55,11 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
         body: jsonEncode({'preferences': selectedPreferences}),
       );
 
+      Get.toNamed(Routes.AddressScreen);
 
       if (response.statusCode == 200) {
-        print("success");
-        Get.toNamed(Routes.AddressScreen);
-
+        // Get.toNamed(Routes.homePage, arguments: {'preferences': selectedPreferences});
+        print("succ");
       } else {
         throw Exception("Failed to save preferences");
       }
@@ -71,160 +70,78 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Simplify the widget structure to eliminate potential null issues
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text(
-          "Choose Your Interests",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-        centerTitle: true,
-        elevation: 0,
+        backgroundColor: const Color(0xFF1E1E1E),
+        title: const Text("What are you interested in?",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 1.3,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-          ),
-          itemCount: preferences.length,
-          itemBuilder: (context, index) {
-            final pref = preferences[index];
-            final isSelected = selectedPreferences.contains(pref['name']);
-
-            return GestureDetector(
-              onTap: () => toggleSelection(pref['name']),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-                decoration: BoxDecoration(
-                  color: isSelected ? pref['color'].withOpacity(0.2) : Colors.grey[900],
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: isSelected ? pref['color'] : Colors.grey[800]!,
-                    width: 3,
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(pref['icon'], color: pref['color'], size: 40),
-                    const SizedBox(height: 8),
-                    Text(
-                      pref['name'],
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
-                  ],
-                ),
+      body: Column(
+        children: [
+          Expanded(
+            child: GridView.builder(
+              padding: const EdgeInsets.all(16),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 1.2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
               ),
-            );
-          },
-        ),
+              itemCount: preferences.length,
+              itemBuilder: (context, index) {
+                final pref = preferences[index];
+                final isSelected = selectedPreferences.contains(pref['name']);
+                final Color color = pref['color'];
+                return GestureDetector(
+                  onTap: () => toggleSelection(pref['name']),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: isSelected ? color.withOpacity(0.15) : const Color(0xFF1E1E1E),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: isSelected ? color : Colors.grey[800]!, width: 2),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                          child: Icon(pref['icon'], color: Colors.white, size: 24),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(pref['name'],
+                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white70)),
+                        if (isSelected) ...[
+                          const SizedBox(height: 8),
+                          Container(width: 24, height: 3, color: color),
+                        ]
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.black,
-          boxShadow: [BoxShadow(color: Colors.white.withOpacity(0.1), blurRadius: 10)],
-        ),
+        decoration: BoxDecoration(color: const Color(0xFF1E1E1E)),
         child: ElevatedButton(
           onPressed: selectedPreferences.length >= 3 ? savePreferences : null,
           style: ElevatedButton.styleFrom(
-            backgroundColor: selectedPreferences.length >= 3 ? Colors.blue : Colors.grey,
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      appBar: AppBar(title: Text('Select Preferences')),
-      body: Column(
-        children: [
-          // Description text
-          Container(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            color: const Color(0xFF1E1E1E),
-            width: double.infinity,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Select categories to personalize your barter trading experience. You can always change these later.",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white70,
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Info banner with fixed layout
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: Colors.blue.withOpacity(0.3),
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.info_outline, color: Colors.blue[400], size: 20),
-                      const SizedBox(width: 12),
-                      const Expanded(
-                        child: Text(
-                          "Select at least 3 categories for the best experience",
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Simplified grid - now using GridView.builder directly
-          Expanded(
-            child: ListView(
-              children: preferences.map((pref) {
-                return ListTile(
-                  leading: Icon(pref['icon'], color: Colors.blueAccent),
-                  title: Text(pref['name']),
-                  trailing: Checkbox(
-                    value: selectedPreferences.contains(pref['name']),
-                    onChanged: (val) => toggleSelection(pref['name']),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: otherController,
-              decoration: InputDecoration(
-                labelText: 'Other (Specify)',
-                border: OutlineInputBorder(),
-              ),
-            ),
+            backgroundColor: Colors.blue,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
           child: Text(
-            selectedPreferences.length >= 3 ? "Continue" : "Select at least 3",
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            selectedPreferences.length >= 3 ? "Continue" : "Select at least 3 categories",
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
-          ElevatedButton(
-            onPressed: savePreferences,
-            child: Text('Continue'),
-          ),
-          SizedBox(height: 20),
-        ],
       ),
     );
   }
