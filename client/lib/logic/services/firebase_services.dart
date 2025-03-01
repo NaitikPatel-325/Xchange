@@ -1,25 +1,51 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:xchange/logic/services/shared_pref.dart';
 import 'package:xchange/utils/utils.dart';
 import 'package:xchange/logic/controller/signin_controller.dart';
 import 'package:xchange/logic/controller/signup_controller.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
+
 class FirebaseServices {
   static final FirebaseAuth auth = FirebaseAuth.instance;
   static final FirebaseDatabase database = FirebaseDatabase.instance;
   static final signInController = Get.put(SignInController());
-  static final signUpController = Get.put(SignupController());
-
-
   static Future<void> createAccount() async {
+    final String baseUrl = 'http://192.168.19.58:3000';
+
+    print("insidesignup"+ baseUrl);
+
+
+
     try {
       signUpController.setLoading(true);
       final String str = signUpController.email.value.text.toString();
       final String node = str.substring(0, str.indexOf('@'));
+
+
+      final response = await http
+          .post(
+        Uri.parse('$baseUrl/api/users/register'),
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        body: jsonEncode({
+          'email': signUpController.email.value.text,
+          'password': signUpController.password.value.text,
+          'displayName': signUpController.name.value.text,
+        }),
+      )
+          .timeout(Duration(seconds: 10), onTimeout: () {
+        throw Exception("Request timed out. Check the backend server.");
+      });
+
+      print("Response received: ${response.statusCode} - ${response.body}");
+
       database.ref('Accounts').child(node).set({
         'displayName': signUpController.name.value.text.toString(),
         'email': signUpController.email.value.text.toString(),
@@ -75,6 +101,9 @@ class FirebaseServices {
       signUpController.setLoading(true);
     }
   }
+
+
+  static final signUpController = Get.put(SignupController());
   static Future<void> loginAccount() async {
     try {
       signInController.setLoading(true);

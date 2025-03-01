@@ -2,10 +2,9 @@ import { User } from "../models/User.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
 const registerUser = asyncHandler(async (req, res) => {
-  console.log(req.body);
-  const { displayname, email, password } = req.body;
-
-  if (!displayname || !email || !password) {
+  const { displayName, email, password } = req.body;
+  console.log(displayName, email, password,req.body);
+  if (!displayName || !email || !password) {
     return res.status(400).json({
       success: false,
       message: "All fields are required",
@@ -23,7 +22,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   // Create new user
   const user = await User.create({
-    displayname,
+    displayName,
     email,
     password,
   });

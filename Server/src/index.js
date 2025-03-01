@@ -10,9 +10,8 @@ dotenv.config({
 connectdb()
   .then(() => {
     server.listen(3000, () => {
-      console.log(process.env.CORS_ORIGIN);
       console.log(
-        `Server is running on port mongodb+srv://kriscollege:Kris%40123@cluster0.3crjfvn.mongodb.net/ParkEZ`
+        `Server is running on port `
       );
     });
   })
