@@ -43,7 +43,7 @@ app.use(express.static("public"));
 app.use(cookieparser());
 
 // API Routes
-app.use("/api/users", userRoutes);
+app.use("/api/users",userRoutes);
 
 // Health check route
 app.get("/health", (req, res) => {
