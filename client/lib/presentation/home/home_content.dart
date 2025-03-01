@@ -46,6 +46,7 @@ class _HomeContentState extends State<HomeContent>{
                 "title": item["listingTitle"]?.toString() ?? "",
                 "category": item["category"]?.toString() ?? "",
                 "description": item["description"]?.toString() ?? "",
+                "listingId": item["listingId"]?.toString() ?? "",
               };
             }).toList();
           });
