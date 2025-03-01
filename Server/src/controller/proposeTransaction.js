@@ -5,6 +5,50 @@ export const getdata = (req,res) => {
     res.send("hello");
 }
 
+export const getUserTransactions = async (req, res) => {
+    try {
+      const { userId } = req.params;
+
+      if (!userId) {
+        return res.status(400).json({
+          success: false,
+          message: 'User ID is required'
+        });
+      }
+
+      // Fetch transactions and populate user1 and user2 with User data
+      const transactions = await Transaction.find({
+        $or: [{ user1: userId }, { user2: userId }]
+      })
+        .populate('user1', 'email name') // Populate user1 with email and name (adjust fields as needed)
+        .populate('user2', 'email name') // Populate user2 with email and name
+        .select('user1 user2 user1Email user2Email barterListing status timestamp offeredItem requestedItem');
+
+      // Format the data for Flutter
+      const formattedTransactions = transactions.map(transaction => ({
+        id: transaction._id.toString(),
+        title: `${transaction.offeredItem?.title || 'Untitled'} for ${transaction.requestedItem?.title || 'Untitled'}`,
+        status: transaction.status,
+        user1Email: transaction.user1Email || transaction.user1?.email || 'Unknown', // Fallback to populated email
+        user2Email: transaction.user2Email || transaction.user2?.email || 'Unknown',
+        user1Name: transaction.user1?.name || 'Unknown', // Populated name
+        user2Name: transaction.user2?.name || 'Unknown', // Populated name
+      }));
+
+      res.status(200).json({
+        success: true,
+        data: formattedTransactions
+      });
+    } catch (error) {
+      console.error('Error in getUserTransactions:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Server error while fetching transactions',
+        error: error.message
+      });
+    }
+  };
+
 export const proposeTransaction = async (req, res) => {
     try {
       const {

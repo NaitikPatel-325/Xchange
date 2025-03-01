@@ -23,44 +23,48 @@ class _HomeContentState extends State<HomeContent>{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var userId = prefs.getString("MONGO_USER_ID");
     if (userId != null) {
+      print(userId);
       await _fetchFeaturedItems(userId);
     }
   }
 
   Future<void> _fetchFeaturedItems(String userId) async {
-    // try {
-    //   final response = await http.get(
-    //     Uri.parse('http://192.168.19.74:3000/api/v2/barter/recommend/$userId'),
-    //   );
-    //
-    //   if (response.statusCode == 200) {
-    //     final Map<String, dynamic> data = json.decode(response.body);
-    //
-    //     if (data.containsKey('recommendations') && data['recommendations'] is List) {
-    //       final List<dynamic> items = data['recommendations'];
-    //
-    //       setState(() {
-    //         recommendedItems = items.map((item) {
-    //           return {
-    //             "userId": item["userId"]?.toString() ?? "",
-    //             "email": item["email"]?.toString() ?? "",
-    //             "title": item["listingTitle"]?.toString() ?? "",
-    //             "category": item["category"]?.toString() ?? "",
-    //             "description": item["description"]?.toString() ?? "",
-    //           };
-    //         }).toList();
-    //       });
-    //
-    //       print("Recommended Items: $recommendedItems");
-    //     } else {
-    //       print("No recommendations found.");
-    //     }
-    //   } else {
-    //     print('Failed to load recommendations: ${response.statusCode}');
-    //   }
-    // } catch (e) {
-    //   print('Error fetching recommendations: $e');
-    // }
+    try {
+      print("inside function");
+
+      final response = await http.get(
+        Uri.parse('http://192.168.19.73:3000/api/v2/barter/recommend/$userId'),
+      );
+      print(response.body);
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+
+        if (data.containsKey('recommendations') && data['recommendations'] is List) {
+          final List<dynamic> items = data['recommendations'];
+
+          setState(() {
+            recommendedItems = items.map((item) {
+              return {
+                "userId": item["userId"]?.toString() ?? "",
+                "email": item["email"]?.toString() ?? "",
+                "title": item["listingTitle"]?.toString() ?? "",
+                "category": item["category"]?.toString() ?? "",
+                "description": item["description"]?.toString() ?? "",
+                "listingId": item["listingId"]?.toString() ?? "",
+              };
+            }).toList();
+          });
+
+          print("Recommended Items: $recommendedItems");
+        } else {
+          print("No recommendations found.");
+        }
+      } else {
+        print('Failed to load recommendations: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching recommendations: $e');
+    }
   }
 
   @override
@@ -124,6 +128,7 @@ class _HomeContentState extends State<HomeContent>{
 
   // New Recommended Section
   Widget _recommendedItems() {
+    print("printing recommeneded items");
     return ListView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,

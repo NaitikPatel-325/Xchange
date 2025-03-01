@@ -28,7 +28,7 @@ class BarterController extends GetxController {
       return;
     }
 
-    var url = Uri.parse('http://192.168.19.58:3000/api/barter/create');
+    var url = Uri.parse('http://192.168.19.73:3000/api/barter/create');
 
     var body = jsonEncode({
       "title": title.value,

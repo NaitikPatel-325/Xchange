@@ -1,7 +1,8 @@
 import express from "express";
 const router = express.Router();
-import { getdata,proposeTransaction } from '../controller/proposeTransaction.js';
+import { proposeTransaction,getUserTransactions } from '../controller/proposeTransaction.js';
 
 router.post('/propose', proposeTransaction);
-router.get('/get',getdata);
+router.get('/user/:userId', getUserTransactions);
+
 export default router;
