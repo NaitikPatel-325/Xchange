@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BarterListing } from "../models/BarterListing.js";
+import { BarterListing } from "../models/Barter.js";
 
 export const getRecommendations = async (userId) => {
   try {

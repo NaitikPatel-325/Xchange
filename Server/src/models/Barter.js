@@ -15,4 +15,5 @@ const BarterListingSchema = new mongoose.Schema({
 // module.exports = mongoose.model("BarterListing", BarterListingSchema);
 export const BarterListing = mongoose.model(
   "BarterListing",
-  BarterListingSchema);
+  BarterListingSchema
+);

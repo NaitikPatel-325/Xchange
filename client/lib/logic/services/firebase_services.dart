@@ -15,92 +15,76 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class FirebaseServices {
   static final FirebaseAuth auth = FirebaseAuth.instance;
-  static final FirebaseDatabase database = FirebaseDatabase.instance;
-  static final signInController = Get.put(SignInController());
+
   static Future<void> createAccount() async {
     final String baseUrl = 'http://192.168.19.58:3000';
-
-    print("insidesignup"+ baseUrl);
-
-
+    print("Inside signup: $baseUrl");
 
     try {
       signUpController.setLoading(true);
-      final String str = signUpController.email.value.text.toString();
-      final String node = str.substring(0, str.indexOf('@'));
+      final String email = signUpController.email.value.text;
+      final String password = signUpController.password.value.text;
+      final String displayName = signUpController.name.value.text;
+      final String node = email.substring(0, email.indexOf('@'));
 
-
-      final response = await http
-          .post(
+      final response = await http.post(
         Uri.parse('$baseUrl/api/users/register'),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode({
-          'email': signUpController.email.value.text,
-          'password': signUpController.password.value.text,
-          'displayName': signUpController.name.value.text,
+          'email': email,
+          'password': password,
+          'displayName': displayName,
         }),
-      )
-          .timeout(Duration(seconds: 10), onTimeout: () {
+      ).timeout(Duration(seconds: 10), onTimeout: () {
         throw Exception("Request timed out. Check the backend server.");
       });
 
-      print("Response received: ${response.statusCode} - ${response.body}");
+      final responseData = jsonDecode(response.body);
+      if (response.statusCode == 201 && responseData['success'] == true) {
+        String mongoUserId = responseData['data']['_id'];
 
-      database.ref('Accounts').child(node).set({
-        'displayName': signUpController.name.value.text.toString(),
-        'email': signUpController.email.value.text.toString(),
-        'password': signUpController.password.value.text.toString(),
-      }).then((value) {
-        auth
-            .createUserWithEmailAndPassword(
-            email: signUpController.email.value.text.toString(),
-            password: signUpController.password.value.text.toString())
-            .then((value) {
-          UserPref.setUser(
-              signUpController.name.value.text.toString(),
-              signUpController.email.value.text.toString(),
-              signUpController.password.value.text.toString(),
-              node,
-              value.user!.uid.toString());
-          Utils.showSnackBar(
-              'Sign up',
-              "Account is successfully created",
-              const Icon(
-                Icons.done,
-                color: Colors.white,
-              ));
-          signUpController.setLoading(false);
-        }).onError((error, stackTrace) {
-          Utils.showSnackBar(
-              'Error',
-              Utils.extractFirebaseError(error.toString()),
-              const Icon(
-                FontAwesomeIcons.triangleExclamation,
-                color: Colors.red,
-              ));
-          signUpController.setLoading(false);
+        await database.ref('Accounts').child(node).set({
+          'displayName': displayName,
+          'email': email,
+          'password': password,
         });
-      }).onError((error, stackTrace) {
+
+        UserCredential userCredential = await auth.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+
+        UserPref.setUser(
+          displayName,
+          email,
+          mongoUserId,
+        );
+
         Utils.showSnackBar(
-            'Error',
-            Utils.extractFirebaseError(error.toString()),
-            const Icon(
-              FontAwesomeIcons.triangleExclamation,
-              color: Colors.red,
-            ));
+          'Sign up',
+          "Account successfully created",
+          const Icon(Icons.done, color: Colors.white),
+        );
+
         signUpController.setLoading(false);
-      });
+        Get.offAllNamed("/preferencesScreen");
+      } else {
+        throw Exception(responseData['message']);
+      }
     } catch (e) {
       Utils.showSnackBar(
-          'Error',
-          Utils.extractFirebaseError(e.toString()),
-          const Icon(
-            FontAwesomeIcons.triangleExclamation,
-            color: Colors.red,
-          ));
-      signUpController.setLoading(true);
+        'Error',
+        Utils.extractFirebaseError(e.toString()),
+        const Icon(FontAwesomeIcons.triangleExclamation, color: Colors.red),
+      );
+      signUpController.setLoading(false);
     }
   }
+
+
+
+  static final FirebaseDatabase database = FirebaseDatabase.instance;
+  static final signInController = Get.put(SignInController());
 
 
   static final signUpController = Get.put(SignupController());
@@ -131,7 +115,7 @@ class FirebaseServices {
           String password = data['password']?.toString() ?? "Unknown";
 
           // Store user data in preferences
-          UserPref.setUser(name, email, password, node, value.toString());
+          UserPref.setUser(name, email,  value.toString());
 
           Utils.showSnackBar(
             'Sign in',
@@ -157,8 +141,7 @@ class FirebaseServices {
         signInController.setLoading(false);
       });
 
-      Get.offAllNamed('/homePage');
-
+    Get.offAllNamed("/homePage");
       // Show success message
       Utils.showSnackBar(
         'Sign in',
@@ -218,9 +201,8 @@ class FirebaseServices {
               UserPref.setUser(
                   value.user!.displayName!,
                   value.user!.email!,
-                  "NOPASSWORD",
-                  node,
-                  value.user!.uid);
+                  "NOTOKEN",
+              );
             }).onError((error, stackTrace) {
               Utils.showSnackBar(
                   'Error',
