@@ -26,7 +26,6 @@ class CreateBarterScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Title Input
               _buildInputField(
                 label: "Barter Title",
                 hint: "Enter a catchy title...",
@@ -34,7 +33,6 @@ class CreateBarterScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // Description Input
               _buildInputField(
                 label: "Description",
                 hint: "Describe what you're offering...",
@@ -43,7 +41,6 @@ class CreateBarterScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // Offering Input
               _buildInputField(
                 label: "What are you offering?",
                 hint: "E.g., Graphic Design Services",
@@ -51,15 +48,20 @@ class CreateBarterScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // Requesting Input
               _buildInputField(
                 label: "What do you want in return?",
                 hint: "E.g., Website Development",
                 onChanged: (value) => controller.request.value = value,
               ),
+              const SizedBox(height: 20),
+
+              _buildInputField(
+                label: "Category",
+                hint: "E.g., Technology, Art, Services...",
+                onChanged: (value) => controller.category.value = value,
+              ),
               const SizedBox(height: 30),
 
-              // Submit Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

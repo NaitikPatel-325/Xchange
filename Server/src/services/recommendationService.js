@@ -14,11 +14,11 @@ export const getRecommendations = async (userId) => {
     // 🔹 Fetch the user's preferences
     const user = await User.findById(userId);
     if (!user) {
-      console.log("❌ User not found.");
+      console.log("User not found.");
       return [];
     }
 
-    console.log(`📌 User Preferences:`, user.preferences);
+    console.log(`User Preferences:`, user.preferences);
 
     // ✅ If no listings, use only preferences for recommendations
     let userQuery;

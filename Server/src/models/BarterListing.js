@@ -7,7 +7,6 @@ const BarterListingSchema = new mongoose.Schema({
   description: { type: String },
   offer: { type: String, required: true }, // What they are offering
   request: { type: String, required: true }, // What they want in return
-  location: { type: String },
   status: { type: String, enum: ["active", "completed"], default: "active" },
   createdAt: { type: Date, default: Date.now },
 });

@@ -1,43 +1,69 @@
 // import { BarterListing } from "../models/BarterListing.js";
 import { BarterListing } from "../models/BarterListing.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import axios from "axios";
+import { User } from "../models/User.js";
 
-// Create a new barter listing
+
 const createListing = asyncHandler(async (req, res) => {
-  const { userId, title, category, description, offer, request, location } =
-    req.body;
+  const { email, title, category, description, offer, request } = req.body;
 
-  if (!userId || !title || !category || !offer || !request) {
+  if (!title || !category || !offer || !request || !description || !email) {
     return res.status(400).json({
       success: false,
       message: "All required fields must be provided",
     });
   }
 
-  // Create new listing
-  const listing = await BarterListing.create({
-    userId,
-    title,
-    category,
-    description,
-    offer,
-    request,
-    location,
-  });
+  console.log("Creating listing:", req.body);
 
   try {
-    await axios.get("http://127.0.0.1:5000/update-model");
-    console.log("AI Model updated successfully in Flask");
-  } catch (error) {
-    console.error("Error updating AI model in Flask:", error.message);
-  }
+    // Fetch userId from email
+    console.log("Finding user with email:", email);
+    const user = await User.findOne({ email : email });
+    console.log("User found:", user);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    const userId = user._id;
 
-  return res.status(201).json({
-    success: true,
-    message: "Listing created successfully",
-    data: listing,
-  });
+    console.log("User found:", userId);
+  
+    // Create new listing
+    const listing = await BarterListing.create({
+      userId,
+      title,
+      category,
+      description,
+      offer,
+      request,
+    });
+
+    // Optional: Call AI model update in Flask
+    // try {
+    //   await axios.get("http://127.0.0.1:5000/update-model");
+    //   console.log("AI Model updated successfully in Flask");
+    // } catch (error) {
+    //   console.error("Error updating AI model in Flask:", error.message);
+    // }
+
+    return res.status(200).json({
+      success: true,
+      message: "Listing created successfully",
+      data: listing,
+    });
+  } catch (error) {
+    console.error("Error creating listing:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
 });
+
 
 // Read - Get all barter listings
 const getAllListings = asyncHandler(async (req, res) => {
@@ -45,6 +71,7 @@ const getAllListings = asyncHandler(async (req, res) => {
     "userId",
     "displayName email"
   );
+  console.log(listings);
   res.status(200).json({
     success: true,
     data: listings,

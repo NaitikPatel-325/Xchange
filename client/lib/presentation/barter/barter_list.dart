@@ -1,27 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:xchange/core/app_color.dart';
+import '../../logic/controller/BarterController.dart';
 import 'barter_details.dart';
 import 'create_barter.dart';
 
 class BarterListScreen extends StatelessWidget {
-  final List<Map<String, String>> barterItems = [
-    {
-      "title": "Laptop for Camera",
-      "description": "Looking to exchange my laptop for a DSLR camera.",
-      "offeredBy": "John Doe",
-    },
-    {
-      "title": "Graphic Design Services",
-      "description": "Offering graphic design work in exchange for website development.",
-      "offeredBy": "Alice Smith",
-    },
-    {
-      "title": "Vintage Vinyl Records",
-      "description": "Swapping vintage vinyl records for rare comic books.",
-      "offeredBy": "Michael Lee",
-    },
-  ];
+  final barterController controller = Get.put(barterController());
 
   @override
   Widget build(BuildContext context) {
@@ -48,21 +33,38 @@ class BarterListScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView.builder(
-        physics: const BouncingScrollPhysics(),
-        itemCount: barterItems.length,
-        itemBuilder: (context, index) {
-          final item = barterItems[index];
-          return _buildBarterCard(context, item);
-        },
-      ),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        if (controller.barterItems.isEmpty) {
+          return Center(
+            child: Text(
+              "No barter items found!",
+              style: TextStyle(color: Colors.white),
+            ),
+          );
+        }
+
+        return ListView.builder(
+          physics: const BouncingScrollPhysics(),
+          itemCount: controller.barterItems.length,
+          itemBuilder: (context, index) {
+            final item = controller.barterItems[index] as Map<String, dynamic>;
+            return _buildBarterCard(context, item);
+          },
+        );
+      }),
     );
   }
 
-  Widget _buildBarterCard(BuildContext context, Map<String, String> item) {
+  Widget _buildBarterCard(BuildContext context, Map<String, dynamic> item) {
     return GestureDetector(
       onTap: () {
-        Get.to(() => BarterDetailScreen(item: item));
+        Get.to(() => BarterDetailScreen(
+          item: item.map((key, value) => MapEntry(key, value.toString())),
+        ));
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -81,9 +83,8 @@ class BarterListScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title
             Text(
-              item["title"] ?? "No Title",
+              item["title"]?.toString() ?? "No Title",
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -93,10 +94,8 @@ class BarterListScreen extends StatelessWidget {
               maxLines: 2,
             ),
             const SizedBox(height: 10),
-
-            // Description
             Text(
-              item["description"] ?? "No description available.",
+              item["description"]?.toString() ?? "No description available.",
               style: const TextStyle(
                 fontSize: 16,
                 color: Colors.white70,
@@ -105,8 +104,6 @@ class BarterListScreen extends StatelessWidget {
               maxLines: 2,
             ),
             const SizedBox(height: 15),
-
-            // Footer: Posted by + Arrow icon
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -115,7 +112,7 @@ class BarterListScreen extends StatelessWidget {
                     const Icon(Icons.person, color: Colors.grey, size: 18),
                     const SizedBox(width: 8),
                     Text(
-                      "By ${item["offeredBy"] ?? "Unknown"}",
+                      "By ${item["offeredBy"]?.toString() ?? "Unknown"}",
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.grey,
