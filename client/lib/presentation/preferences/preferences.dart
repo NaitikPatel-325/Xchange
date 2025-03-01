@@ -13,6 +13,7 @@ class PreferencesScreen extends StatefulWidget {
 }
 
 class _PreferencesScreenState extends State<PreferencesScreen> {
+  // Ensure icons are properly defined and not null
   final List<Map<String, dynamic>> preferences = [
     {'name': 'Electronics', 'icon': Icons.devices, 'color': Colors.blue},
     {'name': 'Furniture', 'icon': Icons.chair, 'color': Colors.amber},
@@ -70,6 +71,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Simplify the widget structure to eliminate potential null issues
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -136,12 +138,93 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
             backgroundColor: selectedPreferences.length >= 3 ? Colors.blue : Colors.grey,
             padding: const EdgeInsets.symmetric(vertical: 14),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      appBar: AppBar(title: Text('Select Preferences')),
+      body: Column(
+        children: [
+          // Description text
+          Container(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            color: const Color(0xFF1E1E1E),
+            width: double.infinity,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Select categories to personalize your barter trading experience. You can always change these later.",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white70,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Info banner with fixed layout
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Colors.blue.withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.info_outline, color: Colors.blue[400], size: 20),
+                      const SizedBox(width: 12),
+                      const Expanded(
+                        child: Text(
+                          "Select at least 3 categories for the best experience",
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Simplified grid - now using GridView.builder directly
+          Expanded(
+            child: ListView(
+              children: preferences.map((pref) {
+                return ListTile(
+                  leading: Icon(pref['icon'], color: Colors.blueAccent),
+                  title: Text(pref['name']),
+                  trailing: Checkbox(
+                    value: selectedPreferences.contains(pref['name']),
+                    onChanged: (val) => toggleSelection(pref['name']),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: otherController,
+              decoration: InputDecoration(
+                labelText: 'Other (Specify)',
+                border: OutlineInputBorder(),
+              ),
+            ),
           ),
           child: Text(
             selectedPreferences.length >= 3 ? "Continue" : "Select at least 3",
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
+          ElevatedButton(
+            onPressed: savePreferences,
+            child: Text('Continue'),
+          ),
+          SizedBox(height: 20),
+        ],
       ),
     );
   }
