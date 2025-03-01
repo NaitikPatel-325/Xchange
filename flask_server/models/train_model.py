@@ -27,14 +27,14 @@ barter_data = pd.DataFrame([
     {"id": 20, "title": "Gaming PC for Professional Camera", "category": "Electronics"}
 ])
 
-# ✅ Step 1: Train a TF-IDF Model and ensure it keeps the vocabulary
+# TF-IDF Model 
 vectorizer = TfidfVectorizer(stop_words="english")
 tfidf_matrix = vectorizer.fit_transform(barter_data["title"])
 
-# ✅ Step 2: Compute similarity between barter listings
+# Compute similarity between barter listings
 cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 
-# ✅ Step 3: Save trained AI model as a DICTIONARY with vocabulary
+# AI model as a DICTIONARY with vocabulary
 model_data = {
     "vectorizer": vectorizer,
     "cosine_sim": cosine_sim,
@@ -45,4 +45,4 @@ model_data = {
 with open("models/barter_match_model.pkl", "wb") as f:
     pickle.dump(model_data, f)
 
-print("✅ AI Model Trained on Expanded Dataset & Saved with Vocabulary!")
+print("AI Model Trained on Expanded Dataset & Saved with Vocabulary!")

@@ -1,4 +1,4 @@
-import { BarterListing } from "../models/BarterListing.js";
+import { BarterListing } from "../models/Barter.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
 // Create a new barter listing

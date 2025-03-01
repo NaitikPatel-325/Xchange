@@ -10,6 +10,8 @@ import '../../presentation/barter/barter_list.dart';
 import '../../presentation/chat/chat_list.dart';
 import '../../presentation/preferences/preferences.dart';
 import '../../presentation/wallet/wallet_screen.dart';
+import '../../presentation/preferences/Address.dart';
+
 
 class AppRoutes {
   static List<GetPage> routes() {
@@ -21,7 +23,8 @@ class AppRoutes {
       GetPage(name: Routes.barterListScreen, page: () => BarterListScreen()),
       GetPage(name: Routes.walletScreen, page: () => const WalletScreen()),
       GetPage(name: Routes.chatListScreen, page: () => ChatListScreen()),
-      GetPage(name: Routes.preferencesScreen, page: () => PreferencesScreen()), // Added Preferences Route
+      GetPage(name: Routes.preferencesScreen, page: () => PreferencesScreen()),
+      GetPage(name: Routes.AddressScreen, page:() => AddressScreen() )// Added Preferences Route
     ];
   }
 }

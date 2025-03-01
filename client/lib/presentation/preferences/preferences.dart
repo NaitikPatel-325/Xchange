@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:xchange/core/routes/routes.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:xchange/core/routes/routes.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferencesScreen extends StatefulWidget {
   const PreferencesScreen({Key? key}) : super(key: key);
@@ -42,16 +42,10 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   }
 
   Future<void> savePreferences() async {
-    if (otherController.text.isNotEmpty) {
-      selectedPreferences.add(otherController.text);
-    }
-
     final String baseUrl = 'http://192.168.19.58:3000';
     try {
       SharedPreferences pref = await SharedPreferences.getInstance();
       String? userId = pref.getString('MONGO_USER_ID');
-      print(userId);
-
       if (userId == null || userId.isEmpty) {
         throw Exception("User ID not found in shared preferences");
       }
@@ -60,12 +54,13 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
         Uri.parse('$baseUrl/api/users/$userId'),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode({'preferences': selectedPreferences}),
-      ).timeout(Duration(seconds: 10), onTimeout: () {
-        throw Exception("Request timed out. Check the backend server.");
-      });
+      );
+
+      Get.toNamed(Routes.AddressScreen);
 
       if (response.statusCode == 200) {
-        Get.toNamed(Routes.homePage, arguments: {'preferences': selectedPreferences});
+        // Get.toNamed(Routes.homePage, arguments: {'preferences': selectedPreferences});
+        print("succ");
       } else {
         throw Exception("Failed to save preferences");
       }
@@ -78,18 +73,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   Widget build(BuildContext context) {
     // Simplify the widget structure to eliminate potential null issues
     return Scaffold(
-      backgroundColor: const Color(0xFF121212), // Dark background
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1E1E1E),
-        elevation: 0,
-        title: const Text("What are you interested in?",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            )
-        ),
-      ),
+      appBar: AppBar(title: Text('Select Preferences')),
       body: Column(
         children: [
           // Description text
@@ -142,155 +126,35 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
 
           // Simplified grid - now using GridView.builder directly
           Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.all(16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,  // Changed to 2 for better mobile display
-                childAspectRatio: 1.2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-              ),
-              itemCount: preferences.length,
-              itemBuilder: (context, index) {
-                final pref = preferences[index];
-                final isSelected = selectedPreferences.contains(pref['name']);
-                final IconData iconData = pref['icon'] as IconData;
-                final Color color = Colors.blue;
-                return GestureDetector(
-                  onTap: () => toggleSelection(pref['name']),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? color.withOpacity(0.15)
-                          : const Color(0xFF1E1E1E),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: isSelected ? color : Colors.grey[800]!,
-                        width: isSelected ? 2 : 1,
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Icon container with explicit dimensions and properties
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: isSelected ? color : color.withOpacity(0.15),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            iconData,
-                            color: isSelected ? Colors.white : color,
-                            size: 24,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        // Text with controlled properties
-                        Text(
-                          pref['name'],
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: isSelected ? color : Colors.white70,
-                            fontSize: 14,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        // Simple selected indicator
-                        if (isSelected) ...[
-                          const SizedBox(height: 8),
-                          Container(
-                            width: 24,
-                            height: 3,
-                            color: color,
-                          ),
-                        ]
-                      ],
-                    ),
+            child: ListView(
+              children: preferences.map((pref) {
+                return ListTile(
+                  leading: Icon(pref['icon'], color: Colors.blueAccent),
+                  title: Text(pref['name']),
+                  trailing: Checkbox(
+                    value: selectedPreferences.contains(pref['name']),
+                    onChanged: (val) => toggleSelection(pref['name']),
                   ),
                 );
-              },
+              }).toList(),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: otherController,
+              decoration: InputDecoration(
+                labelText: 'Other (Specify)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: savePreferences,
+            child: Text('Continue'),
+          ),
+          SizedBox(height: 20),
         ],
-      ),
-
-      // Bottom bar with fixed properties and safe implementation
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1E1E1E),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              blurRadius: 8,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                Text(
-                  "${selectedPreferences.length} categories selected",
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.white70,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Spacer(),
-                if (selectedPreferences.isNotEmpty)
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        selectedPreferences.clear();
-                      });
-                    },
-                    child: const Text(
-                      "Clear All",
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: selectedPreferences.length >= 3
-                  ? savePreferences
-                  : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                disabledBackgroundColor: Colors.blue.withOpacity(0.3),
-                disabledForegroundColor: Colors.white60,
-              ),
-              child: Container(
-                width: double.infinity,
-                alignment: Alignment.center,
-                child: Text(
-                  selectedPreferences.length >= 3
-                      ? "Continue"
-                      : "Select at least 3 categories",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
