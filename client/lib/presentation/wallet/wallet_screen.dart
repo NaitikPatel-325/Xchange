@@ -9,11 +9,11 @@ class WalletScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: darkBackgroundColor,
-      appBar: AppBar(
-        title: const Text("My Wallet", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
+      // appBar: AppBar(
+      //   title: const Text("My Wallet", style: TextStyle(color: Colors.white)),
+      //   backgroundColor: Colors.transparent,
+      //   elevation: 0,
+      // ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -64,9 +64,21 @@ class WalletScreen extends StatelessWidget {
             Expanded(
               child: ListView(
                 children: [
-                  _transactionItem("Received from John Doe", "+300 BP", Colors.green),
-                  _transactionItem("Exchanged for Camera", "-500 BP", Colors.red),
-                  _transactionItem("Received from Alice", "+200 BP", Colors.green),
+                  _transactionItem(
+                    "Received from John Doe",
+                    "+300 BP",
+                    Colors.green,
+                  ),
+                  _transactionItem(
+                    "Exchanged for Camera",
+                    "-500 BP",
+                    Colors.red,
+                  ),
+                  _transactionItem(
+                    "Received from Alice",
+                    "+200 BP",
+                    Colors.green,
+                  ),
                 ],
               ),
             ),
@@ -93,7 +105,10 @@ class WalletScreen extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
         title: Text(title, style: const TextStyle(color: Colors.white)),
-        trailing: Text(amount, style: TextStyle(color: amountColor, fontWeight: FontWeight.bold)),
+        trailing: Text(
+          amount,
+          style: TextStyle(color: amountColor, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }

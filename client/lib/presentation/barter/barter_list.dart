@@ -13,7 +13,8 @@ class BarterListScreen extends StatelessWidget {
     },
     {
       "title": "Graphic Design Services",
-      "description": "Offering graphic design work in exchange for website development.",
+      "description":
+          "Offering graphic design work in exchange for website development.",
       "offeredBy": "Alice Smith",
     },
   ];
@@ -22,19 +23,19 @@ class BarterListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: darkBackgroundColor,
-      appBar: AppBar(
-        title: const Text("Barter Listings", style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              Get.to(() => CreateBarterScreen());
-            },
-          ),
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: const Text("Barter Listings", style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+      //   backgroundColor: Colors.transparent,
+      //   elevation: 0,
+      //   actions: [
+      //     IconButton(
+      //       icon: const Icon(Icons.add),
+      //       onPressed: () {
+      //         Get.to(() => CreateBarterScreen());
+      //       },
+      //     ),
+      //   ],
+      // ),
       body: ListView.builder(
         itemCount: barterItems.length,
         itemBuilder: (context, index) {

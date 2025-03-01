@@ -20,11 +20,11 @@ class ChatListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: const Text("Chats", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
+      // appBar: AppBar(
+      //   title: const Text("Chats", style: TextStyle(color: Colors.white)),
+      //   backgroundColor: Colors.transparent,
+      //   elevation: 0,
+      // ),
       body: ListView.builder(
         itemCount: chats.length,
         itemBuilder: (context, index) {
@@ -33,11 +33,25 @@ class ChatListScreen extends StatelessWidget {
             color: Colors.grey[900],
             margin: const EdgeInsets.all(10),
             child: ListTile(
-              title: Text(chat["title"] ?? "", style: const TextStyle(color: Colors.white)),
-              subtitle: Text(chat["lastMessage"] ?? "", style: TextStyle(color: Colors.grey[400])),
-              trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white),
+              title: Text(
+                chat["title"] ?? "",
+                style: const TextStyle(color: Colors.white),
+              ),
+              subtitle: Text(
+                chat["lastMessage"] ?? "",
+                style: TextStyle(color: Colors.grey[400]),
+              ),
+              trailing: const Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.white,
+              ),
               onTap: () {
-                Get.to(() => ChatScreen(user: chat["user"] ?? "Unknown", title: chat["title"] ?? ""));
+                Get.to(
+                  () => ChatScreen(
+                    user: chat["user"] ?? "Unknown",
+                    title: chat["title"] ?? "",
+                  ),
+                );
               },
             ),
           );
