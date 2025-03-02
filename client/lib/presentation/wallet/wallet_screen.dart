@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:xchange/core/app_color.dart';
 
+import '../../logic/controller/wallet_controller.dart';
+
 class WalletScreen extends StatelessWidget {
   const WalletScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    print("wallet page");
+    final WalletController controller = Get.put(WalletController());
+
     return Scaffold(
       backgroundColor: darkBackgroundColor,
-      // appBar: AppBar(
-      //   title: const Text("My Wallet", style: TextStyle(color: Colors.white)),
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0,
-      // ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -25,33 +25,39 @@ class WalletScreen extends StatelessWidget {
             ),
             const SizedBox(height: 10),
 
-            // Wallet Balance Card
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.blueAccent,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Your Balance",
-                    style: TextStyle(fontSize: 16, color: Colors.white70),
+            // Wallet Balance Card with Gradient
+            Obx(() {
+              return Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  gradient: const LinearGradient(
+                    colors: [Colors.purpleAccent, Colors.pinkAccent],
                   ),
-                  const SizedBox(height: 5),
-                  Text(
-                    "1200 BP", // Dummy barter points
-                    style: const TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Your Balance",
+                      style: TextStyle(fontSize: 16, color: Colors.white70),
                     ),
-                  ),
-                ],
-              ),
-            ),
+                    const SizedBox(height: 5),
+                    controller.isLoading.value
+                        ? const Center(child: CircularProgressIndicator(color: Colors.white))
+                        : Text(
+                      "${controller.barterPoints.value} BP",
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
 
             const SizedBox(height: 30),
 
@@ -85,7 +91,7 @@ class WalletScreen extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // Transfer & Request Buttons
+            // Transfer & Request Buttons with Gradient
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -116,9 +122,15 @@ class WalletScreen extends StatelessWidget {
   Widget _actionButton(IconData icon, String label) {
     return Column(
       children: [
-        CircleAvatar(
-          radius: 30,
-          backgroundColor: Colors.blueAccent,
+        Container(
+          width: 65,
+          height: 65,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(50),
+            gradient: const LinearGradient(
+              colors: [Colors.purpleAccent, Colors.pinkAccent],
+            ),
+          ),
           child: Icon(icon, color: Colors.white, size: 30),
         ),
         const SizedBox(height: 10),

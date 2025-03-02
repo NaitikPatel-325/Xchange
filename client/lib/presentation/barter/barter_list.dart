@@ -120,6 +120,20 @@ class BarterListScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+                Row(
+                  children: [
+                    const Icon(Icons.monetization_on, color: Colors.orangeAccent, size: 18),
+                    const SizedBox(width: 5),
+                    Text(
+                      "${item["barterPoints"] ?? 0} Points",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orangeAccent,
+                      ),
+                    ),
+                  ],
+                ),
                 const Icon(
                   Icons.arrow_forward_ios,
                   color: Colors.white,

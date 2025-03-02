@@ -29,6 +29,8 @@ class barterController extends GetxController {
             "title": item["title"]?.toString() ?? "No Title",
             "description": item["description"]?.toString() ?? "No Description",
             "offeredBy": item["userId"]?["displayName"]?.toString() ?? "Unknown",
+            "barterPoints": item["barterPoints"] ?? 0,
+
           }).toList());
         } else {
           print("Invalid data format received.");

@@ -5,6 +5,7 @@ import {
   updateUser,
   updateaddUser,
   deleteUser,
+  getUserbyEmail
 } from "../controller/user.js";
 
 const router = Router();
@@ -12,7 +13,7 @@ const router = Router();
 router.post("/register", registerUser);
 // Read - Get user by ID
 router.get("/:id", getUserById);
-
+router.get("/email/:email", getUserbyEmail);
 
 // Update - Update user details
 router.put("/:id", updateUser);

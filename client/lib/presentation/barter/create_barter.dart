@@ -72,6 +72,12 @@ class _CreateBarterScreenState extends State<CreateBarterScreen> {
                 hint: "E.g., Website Development",
                 onChanged: (value) => controller.request.value = value,
               ),
+
+            _buildInputField(
+              label: "Barter Points",
+              hint: "Assign points for your barter deal",
+              onChanged: (value) => controller.barterPoints.value = int.tryParse(value) ?? 0,
+            ),
               const SizedBox(height: 20),
 
               Text(

@@ -39,7 +39,6 @@ class _CategoryListingsScreenState extends State<CategoryListingsScreen> {
               "offer": item["offer"]?.toString() ?? "No Offer",
               "request": item["request"]?.toString() ?? "No Request",
               "category": item["category"]?.toString() ?? "Uncategorized",
-              "location": item["location"]?.toString() ?? "Unknown",
             }).toList();
 
             filterByCategory();

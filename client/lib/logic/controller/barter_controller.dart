@@ -13,6 +13,8 @@ class BarterController extends GetxController {
   var request = ''.obs;
   var category = ''.obs;
   var imageUrl = ''.obs;
+  var barterPoints = 0.obs ;
+
 
   Future<void> submitBarter() async {
     if (title.isEmpty || description.isEmpty || offer.isEmpty || request.isEmpty || category.isEmpty) {
@@ -37,6 +39,7 @@ class BarterController extends GetxController {
       "request": request.value,
       "category": category.value,
       "email": email,
+      "barterPoints" : barterPoints.value ,
     });
 
     print(body);

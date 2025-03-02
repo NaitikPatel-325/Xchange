@@ -5,9 +5,10 @@ import { User } from "../models/User.js";
 
 
 const createListing = asyncHandler(async (req, res) => {
-  const { email, title, category, description, offer, request } = req.body;
+  const { email, title, category, description, offer, request,barterPoints } = req.body;
+  console.log(!barterPoints);
 
-  if (!title || !category || !offer || !request || !description || !email) {
+  if (!title || !category || !offer || !request || !description || !email || !barterPoints) {
     return res.status(400).json({
       success: false,
       message: "All required fields must be provided",
@@ -21,7 +22,7 @@ const createListing = asyncHandler(async (req, res) => {
     // console.log("Finding user with email:", email);
     const user = await User.findOne({ email : email });
     // console.log("User found:", user);
-    if (!user) {
+    if (!user) {  
       return res.status(404).json({
         success: false,
         message: "User not found",
@@ -39,6 +40,7 @@ const createListing = asyncHandler(async (req, res) => {
       description,
       offer,
       request,
+      barterPoints
     });
 
     // Optional: Call AI model update in Flask

@@ -31,7 +31,7 @@ class _AddressScreenState extends State<AddressScreen> {
   }
 
   Future<void> _fetchUserAddress() async {
-    final String baseUrl = 'http://192.168.19.73:3000';
+    final String baseUrl = 'http://192.168.19.58:3000';
     try {
       final response = await http.get(Uri.parse('$baseUrl/api/users/$userId'));
       if (response.statusCode == 200) {

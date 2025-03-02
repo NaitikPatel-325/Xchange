@@ -5,10 +5,12 @@ const BarterListingSchema = new mongoose.Schema({
   title: { type: String, required: true },
   category: { type: String, required: true }, // e.g., Electronics, Furniture
   description: { type: String },
+  barterPoints:{type:Number,required:true},
   offer: { type: String, required: true }, // What they are offering
   request: { type: String, required: true }, // What they want in return
   status: { type: String, enum: ["active", "completed"], default: "active" },
   createdAt: { type: Date, default: Date.now },
+
 });
 
 // module.exports = mongoose.model("BarterListing", BarterListingSchema);
