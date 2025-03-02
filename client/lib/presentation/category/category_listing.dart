@@ -27,18 +27,23 @@ class _CategoryListingsScreenState extends State<CategoryListingsScreen> {
   Future<void> fetchAllBarterItems() async {
     try {
       final response = await http.get(Uri.parse("http://192.168.19.58:3000/api/barter"));
-
+      // print(response.statusCode);
       if (response.statusCode == 200) {
         var responseBody = json.decode(response.body);
 
-        if (responseBody is List) {
+        if (responseBody['success'] == true && responseBody['data'] is List) {
+          List data = responseBody['data'];
+          // print(data);
           setState(() {
-            allBarterItems = responseBody.map((item) => {
+            allBarterItems = data.map<Map<String, dynamic>>((item) => {
               "title": item["title"]?.toString() ?? "No Title",
               "description": item["description"]?.toString() ?? "No Description",
               "offer": item["offer"]?.toString() ?? "No Offer",
               "request": item["request"]?.toString() ?? "No Request",
               "category": item["category"]?.toString() ?? "Uncategorized",
+              "location": item["location"]?.toString() ?? "Unknown",
+              "barterPoints": item["barterPoints"] ?? 0,
+              "userName": item["userId"]?["displayName"] ?? "Unknown User",
             }).toList();
 
             filterByCategory();

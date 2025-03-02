@@ -51,7 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       print('Fetching transactions for User ID: $userId');
       final response = await http.get(
-        Uri.parse('http://192.168.19.73:3000/api/transaction/user/$userId'),
+        Uri.parse('http://192.168.19.58:3000/api/transaction/user/$userId'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -514,7 +514,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       // First, update the API
       final response = await http.put(
-        Uri.parse('http://192.168.19.73:3000/api/transaction/$barterId'),
+        Uri.parse('http://192.168.19.58:3000/api/transaction/$barterId'),
         headers: {
           'Content-Type': 'application/json',
         },

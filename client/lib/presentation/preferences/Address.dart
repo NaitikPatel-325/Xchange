@@ -47,7 +47,7 @@ class _AddressScreenState extends State<AddressScreen> {
 
   Future<void> updateAddress() async {
     if (_formKey.currentState!.validate() && userId != null) {
-      final String baseUrl = 'http://192.168.19.73:3000';
+      final String baseUrl = 'http://192.168.19.58:3000';
       try {
         final response = await http.put(
           Uri.parse('$baseUrl/api/users/$userId'),

@@ -33,7 +33,7 @@ class _HomeContentState extends State<HomeContent>{
       print("inside function");
 
       final response = await http.get(
-        Uri.parse('http://192.168.19.73:3000/api/v2/barter/recommend/$userId'),
+        Uri.parse('http://192.168.19.58:3000/api/v2/barter/recommend/$userId'),
       );
       print(response.body);
       if (response.statusCode == 200) {

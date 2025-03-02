@@ -195,7 +195,7 @@ class BarterDetailScreen extends StatelessWidget {
       };
 
       final response = await http.post(
-        Uri.parse("http://192.168.19.73:3000/api/transaction/propose"),
+        Uri.parse("http://192.168.19.58:3000/api/transaction/propose"),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(proposalData),
       );
