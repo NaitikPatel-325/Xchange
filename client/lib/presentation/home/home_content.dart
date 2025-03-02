@@ -228,37 +228,37 @@ class _HomeContentState extends State<HomeContent>{
             ],
           ),
           const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: Colors.grey[800],
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[700]!),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.search, color: Colors.grey[400]),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: "Search for items to trade...",
-                      hintStyle: TextStyle(color: Colors.grey[500]),
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.tune, color: Colors.grey[400]),
-                  onPressed: () {},
-                  constraints: const BoxConstraints(),
-                  padding: EdgeInsets.zero,
-                ),
-              ],
-            ),
-          ),
+          // Container(
+          //   padding: const EdgeInsets.symmetric(horizontal: 16),
+          //   decoration: BoxDecoration(
+          //     color: Colors.grey[800],
+          //     borderRadius: BorderRadius.circular(12),
+          //     border: Border.all(color: Colors.grey[700]!),
+          //   ),
+          //   child: Row(
+          //     children: [
+          //       Icon(Icons.search, color: Colors.grey[400]),
+          //       const SizedBox(width: 12),
+          //       Expanded(
+          //         child: TextField(
+          //           decoration: InputDecoration(
+          //             hintText: "Search for items to trade...",
+          //             hintStyle: TextStyle(color: Colors.grey[500]),
+          //             border: InputBorder.none,
+          //             contentPadding: const EdgeInsets.symmetric(vertical: 16),
+          //           ),
+          //           style: const TextStyle(color: Colors.white),
+          //         ),
+          //       ),
+          //       IconButton(
+          //         icon: Icon(Icons.tune, color: Colors.grey[400]),
+          //         onPressed: () {},
+          //         constraints: const BoxConstraints(),
+          //         padding: EdgeInsets.zero,
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );
