@@ -125,3 +125,54 @@ export const proposeTransaction = async (req, res) => {
       });
     }
   };
+
+
+export const updateTransactionStatus = async (req, res) => {
+    try {
+      const transactionId = req.params.id;
+      const { status } = req.body;
+
+      // Validate inputs
+      if (!transactionId) {
+        return res.status(400).json({
+          success: false,
+          message: 'Transaction ID is required'
+        });
+      }
+
+      if (!status || !['Active', 'Pending', 'Completed'].includes(status)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Valid status (Active, Pending, or Completed) is required'
+        });
+      }
+
+      // Assuming you have a Transaction model
+      const transaction = await Transaction.findById(transactionId);
+
+      if (!transaction) {
+        return res.status(404).json({
+          success: false,
+          message: 'Transaction not found'
+        });
+      }
+
+      // Update the transaction status
+      transaction.status = status;
+      await transaction.save();
+
+      return res.status(200).json({
+        success: true,
+        message: 'Transaction status updated successfully',
+        data: transaction
+      });
+
+    } catch (error) {
+      console.error('Error updating transaction status:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to update transaction status',
+        error: error.message
+      });
+    }
+  };

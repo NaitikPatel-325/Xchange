@@ -510,27 +510,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   // Method to update a barter from Active to Completed
-  void _completeActiveBarter(String barterId) {
-    setState(() {
-      // Find the index of the barter with the given ID
-      int index = barterHistory.indexWhere((item) => item["id"] == barterId);
+  Future<void> _completeActiveBarter(String barterId) async {
+    try {
+      // First, update the API
+      final response = await http.put(
+        Uri.parse('http://192.168.19.73:3000/api/transaction/$barterId'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'status': 'Completed',
+        }),
+      );
 
-      if (index != -1) {
-        // Update the status of the barter
-        barterHistory[index]["status"] = "Completed";
+      if (response.statusCode == 200) {
+        // If API update successful, update local state
+        setState(() {
+          int index = barterHistory.indexWhere((item) => item["id"] == barterId);
+          if (index != -1) {
+            barterHistory[index]["status"] = "Completed";
 
-        // Here you would also update this in your database
-        // Example API call (not implemented):
-        // apiService.updateBarterStatus(barterId, "Completed");
-
-        // If the current filter is "Active", we need to switch to "Completed"
-        // to see the updated barter
-        if (_selectedFilter == "Active") {
-          _selectedFilter = "Completed";
-        }
+            // Switch to Completed tab to see the updated barter
+            if (_selectedFilter == "Active") {
+              _selectedFilter = "Completed";
+            }
+          }
+        });
+      } else {
+        // Handle API error
+        throw Exception('Failed to update transaction: ${response.statusCode}');
       }
-    });
+    } catch (e) {
+      // Show error to user
+      Get.snackbar(
+        "Error",
+        "Failed to complete barter: $e",
+        backgroundColor: Colors.red.withOpacity(0.7),
+        colorText: Colors.white,
+      );
+    }
   }
+
 
   Widget _actionButton(IconData icon, String label, VoidCallback onTap) {
     return Column(
