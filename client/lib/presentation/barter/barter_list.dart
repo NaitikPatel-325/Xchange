@@ -7,6 +7,7 @@ import 'create_barter.dart';
 
 class BarterListScreen extends StatelessWidget {
   final barterController controller = Get.put(barterController());
+  final TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -33,29 +34,63 @@ class BarterListScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
-        }
-
-        if (controller.barterItems.isEmpty) {
-          return Center(
-            child: Text(
-              "No barter items found!",
-              style: TextStyle(color: Colors.white),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: TextField(
+              controller: searchController,
+              onChanged: (value) => controller.filterBarterItems(value),
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: 'Search by title or description...',
+                hintStyle: const TextStyle(color: Colors.white70),
+                prefixIcon: const Icon(Icons.search, color: Colors.white70),
+                filled: true,
+                fillColor: Colors.grey[850],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide.none,
+                ),
+                suffixIcon: searchController.text.isNotEmpty
+                    ? IconButton(
+                  icon: const Icon(Icons.clear, color: Colors.white70),
+                  onPressed: () {
+                    searchController.clear();
+                    controller.filterBarterItems('');
+                  },
+                )
+                    : null,
+              ),
             ),
-          );
-        }
+          ),
+          Expanded(
+            child: Obx(() {
+              if (controller.isLoading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-        return ListView.builder(
-          physics: const BouncingScrollPhysics(),
-          itemCount: controller.barterItems.length,
-          itemBuilder: (context, index) {
-            final item = controller.barterItems[index] as Map<String, dynamic>;
-            return _buildBarterCard(context, item);
-          },
-        );
-      }),
+              if (controller.filteredBarterItems.isEmpty) {
+                return const Center(
+                  child: Text(
+                    "No barter items found!",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                );
+              }
+
+              return ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                itemCount: controller.filteredBarterItems.length,
+                itemBuilder: (context, index) {
+                  final item = controller.filteredBarterItems[index] as Map<String, dynamic>;
+                  return _buildBarterCard(context, item);
+                },
+              );
+            }),
+          ),
+        ],
+      ),
     );
   }
 

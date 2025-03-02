@@ -4,6 +4,7 @@ import 'dart:convert';
 
 class barterController extends GetxController {
   var barterItems = [].obs;
+  var filteredBarterItems = [].obs;
   var isLoading = true.obs;
 
   @override
@@ -35,6 +36,8 @@ class barterController extends GetxController {
             "listingId" : item["_id"]?.toString() ?? "0xFucker" ,
             "userId" : item["userId"]?["_id"]?.toString() ?? "0xSex" ,
           }).toList());
+
+          filteredBarterItems.assignAll(barterItems);
         } else {
           print("Invalid data format received.");
         }
@@ -45,6 +48,19 @@ class barterController extends GetxController {
       print("Error fetching items: $e");
     } finally {
       isLoading(false);
+    }
+  }
+
+  void filterBarterItems(String query) {
+    if (query.isEmpty) {
+      filteredBarterItems.assignAll(barterItems);
+    } else {
+      filteredBarterItems.assignAll(
+        barterItems.where((item) =>
+        item["title"].toString().toLowerCase().contains(query.toLowerCase()) ||
+            item["description"].toString().toLowerCase().contains(query.toLowerCase())
+        ).toList(),
+      );
     }
   }
 }
