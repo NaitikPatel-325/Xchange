@@ -81,4 +81,3 @@ XChange is a revolutionary mobile application designed to bring back the concept
 ## 📜 License
 This project is licensed under the MIT License.
 
-<img src="assets/img12.jpeg" width="300" alt="License">
