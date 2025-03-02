@@ -17,7 +17,7 @@ class barterController extends GetxController {
     try {
       isLoading(true);
       print("inside fetch barterr");
-      final response = await http.get(Uri.parse("http://192.168.19.58:3000/api/barter/"));
+      final response = await http.get(Uri.parse("http://192.168.19.73:3000/api/barter/"));
 
       if (response.statusCode == 200) {
         var responseBody = json.decode(response.body);
@@ -31,6 +31,9 @@ class barterController extends GetxController {
             "offeredBy": item["userId"]?["displayName"]?.toString() ?? "Unknown",
             "barterPoints": item["barterPoints"] ?? 0,
 
+            "email" : item["userId"]?["email"]?.toString() ?? "test@test.com" ,
+            "listingId" : item["_id"]?.toString() ?? "0xFucker" ,
+            "userId" : item["userId"]?["_id"]?.toString() ?? "0xSex" ,
           }).toList());
         } else {
           print("Invalid data format received.");

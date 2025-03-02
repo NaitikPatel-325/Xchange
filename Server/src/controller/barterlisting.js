@@ -31,7 +31,7 @@ const createListing = asyncHandler(async (req, res) => {
     const userId = user._id;
 
     // console.log("User found:", userId);
-  
+
     // Create new listing
     const listing = await BarterListing.create({
       userId,
@@ -143,13 +143,13 @@ const deleteListing = asyncHandler(async (req, res) => {
 
 const getBartersByCategory = asyncHandler(async (req, res) => {
     try {
-      const category = req.query.category; 
+      const category = req.query.category;
       let barters;
       console.log("inside barters",category);
       if (category) {
-          barters = await BarterListing.find({ category: category }); 
+          barters = await BarterListing.find({ category: category });
       } else {
-          barters = await BarterListing.find(); 
+          barters = await BarterListing.find();
       }
 
       console.log(barters);

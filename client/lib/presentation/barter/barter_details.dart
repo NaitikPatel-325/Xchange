@@ -175,7 +175,7 @@ class BarterDetailScreen extends StatelessWidget {
         );
         return;
       }
-
+      print(item["userId"]);
       final Map<String, dynamic> proposalData = {
         'requestorId': requestorId,
         'requestorEmail': requestorEmail,
@@ -209,7 +209,7 @@ class BarterDetailScreen extends StatelessWidget {
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
-        Get.offAllNamed('/barterListScreen');
+        Get.offAllNamed('/homePage');
       } else {
         final errorMessage = json.decode(response.body)['message'] ?? 'Failed to propose exchange';
         throw Exception('Error: $errorMessage');
